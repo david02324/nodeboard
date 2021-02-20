@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>node로 만드는 게시판</title>
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/stylesheets/style.css">
+        <link rel="stylesheet" href="/stylesheets/menu-button.css">
+    </head>
+    <body>
+        <aside id="sidebar">
+            
+        </aside>
+        <div id="header">
+            <div id="menu-button">
+                <div id="menu-button-line-wrapper">
+                <div id="line-top" class="line init top-reverse"></div>
+                <div id="line-mid" class="line init mid-reverse"></div>
+                <div id="line-bot" class="line init bot-reverse"></div>
+                </div>
+            </div>
+        </div>
+        <div id="content">
+            <div id="board-title">
+                전체글 보기
+            </div>
+            <div id="wrap-inner">
+                <div id="inner-left">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>작성자</th>
+                            <th>제목</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>3</td>
+                            <td>Doe</td>
+                            <td>글 보기 영역 샘플 글 1</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Moe</td>
+                            <td>글 보기 영역 샘플 글 2</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Dooley</td>
+                            <td>글 보기 영역 샘플 글 3</td>
+                        </tr>
+                        </tbody> 
+                    </table>
+                </div>
+                <div id="inner-right">
+                    <div id="notice">
+                        <span>(공지사항)</span>
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <td>샘플 공지사항 1</td>
+                            </tr>
+                            <tr>
+                                <td>샘플 공지사항 2</td>
+                            </tr>
+                            <tr>
+                                <td>샘플 공지사항 3</td>
+                            </tr>
+                            </tbody> 
+                        </table>
+                    </div>
+                    <div id="best-posts">
+                        <span>(추천글)</span>
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <td>샘플 추천글 1</td>
+                            </tr>
+                            <tr>
+                                <td>샘플 추천글 2</td>
+                            </tr>
+                            <tr>
+                                <td>샘플 추천글 3</td>
+                            </tr>
+                            </tbody> 
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/jq/jquery.min.js"></script>
+    <script src="javascripts/effect.js"></script>
+</html>
