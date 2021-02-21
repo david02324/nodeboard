@@ -7,18 +7,8 @@
         <link rel="stylesheet" href="/stylesheets/menu-button.css">
     </head>
     <body>
-        <aside id="sidebar">
-            
-        </aside>
-        <div id="header">
-            <div id="menu-button">
-                <div id="menu-button-line-wrapper">
-                <div id="line-top" class="line init top-reverse"></div>
-                <div id="line-mid" class="line init mid-reverse"></div>
-                <div id="line-bot" class="line init bot-reverse"></div>
-                </div>
-            </div>
-        </div>
+        <%-include('sidebar')%>
+        <%-include('navi-bar')%>
         <div id="content">
             <div id="board-title">
                 전체글 보기
@@ -89,7 +79,7 @@
             </div>
         </div>
     </body>
-    <script src="/js/bootstrap.min.js"></script>
     <script src="/jq/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
     <script src="javascripts/effect.js"></script>
 </html>
