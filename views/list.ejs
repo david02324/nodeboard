@@ -11,7 +11,7 @@
         <%-include('navi-bar')%>
         <div id="content">
             <div id="board-title">
-                전체글 보기
+                <%=type%>
             </div>
             <div id="wrap-inner">
                 <div id="inner-left">
@@ -21,24 +21,20 @@
                             <th>ID</th>
                             <th>작성자</th>
                             <th>제목</th>
+                            <th>조회수</th>
+                            <th>추천수</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>3</td>
-                            <td>Doe</td>
-                            <td>글 보기 영역 샘플 글 1</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Moe</td>
-                            <td>글 보기 영역 샘플 글 2</td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>Dooley</td>
-                            <td>글 보기 영역 샘플 글 3</td>
-                        </tr>
+                        <%  for(let post of postData){ %>
+                            <tr>
+                                <th><%=post.ID%></th>
+                                <th><%=post.AUTHOR%></th>
+                                <th><%=post.TITLE%></th>
+                                <th><%=post.VIEWS%></th>
+                                <th><%=post.THUMBUP%></th>
+                            </tr>
+                        <% } %>
                         </tbody> 
                     </table>
                 </div>
