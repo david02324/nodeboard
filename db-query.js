@@ -1,4 +1,3 @@
-const e = require('express');
 var db = require('./db-connect')
 
 var getList = function(amount,type,page,callback){
@@ -6,7 +5,7 @@ var getList = function(amount,type,page,callback){
     if (type===undefined){
         db.query('SELECT COUNT(*) AS COUNT FROM POST',function(err,count){
             if (err)
-                print('에러 발생 : ' + err);
+                console.log('에러 발생 : ' + err);
             else{
                 count = count[0].COUNT;
                 var maxPage = Math.ceil(count / amount);
@@ -23,7 +22,7 @@ var getList = function(amount,type,page,callback){
     } else {
         db.query('SELECT COUNT(*) AS COUNT FROM POST WHERE TYPE=?',[type],function(err,count){
             if (err)
-                print('에러 발생 : ' + err);
+                console.log('에러 발생 : ' + err);
             else{
                 count = count[0].COUNT;
                 var maxPage = Math.ceil(count / amount);
@@ -39,4 +38,17 @@ var getList = function(amount,type,page,callback){
     }
 }
 
-module.exports = getList;
+var viewPost = function(id,callback){
+    // 조회수 증가
+    db.query('UPDATE POST SET VIEWS=VIEWS+1 WHERE ID=?',[id],function(){});
+    // 글 조회
+    db.query('SELECT * FROM POST WHERE ID=?',[id],function(err,post){
+        if(err){
+            console.log('에러 발생 : ' + err);
+        } else{
+            callback(post[0]);
+        }
+    });
+}
+exports.getList = getList;
+exports.viewPost = viewPost;

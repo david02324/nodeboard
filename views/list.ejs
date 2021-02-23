@@ -30,48 +30,15 @@
                             <tr>
                                 <th><%=post.ID%></th>
                                 <th><%=post.AUTHOR%></th>
-                                <th><%=post.TITLE%></th>
+                                <th><a href="/view?id=<%=post.ID%>"><%=post.TITLE%></a></th>
                                 <th><%=post.VIEWS%></th>
                                 <th><%=post.THUMBUP%></th>
                             </tr>
                         <% } %>
-                        </tbody> 
+                        </tbody>
                     </table>
                 </div>
-                <div id="inner-right">
-                    <div id="notice">
-                        <span>(공지사항)</span>
-                        <table class="table">
-                            <tbody>
-                            <tr>
-                                <td>샘플 공지사항 1</td>
-                            </tr>
-                            <tr>
-                                <td>샘플 공지사항 2</td>
-                            </tr>
-                            <tr>
-                                <td>샘플 공지사항 3</td>
-                            </tr>
-                            </tbody> 
-                        </table>
-                    </div>
-                    <div id="best-posts">
-                        <span>(추천글)</span>
-                        <table class="table">
-                            <tbody>
-                            <tr>
-                                <td>샘플 추천글 1</td>
-                            </tr>
-                            <tr>
-                                <td>샘플 추천글 2</td>
-                            </tr>
-                            <tr>
-                                <td>샘플 추천글 3</td>
-                            </tr>
-                            </tbody> 
-                        </table>
-                    </div>
-                </div>
+                <%-include('inner-right')%>
             </div>
         </div>
     </body>

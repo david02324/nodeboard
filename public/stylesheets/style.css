@@ -32,7 +32,7 @@ p{
 }
 #inner-left{
   min-height: 1000px;
-  min-width: 800px;
+  min-width: 900px;
   border: solid 1px grey;
   margin-right: 30px;
 }
@@ -56,4 +56,49 @@ p{
 }
 #notice > span,#best-posts > span{
   font-size: 15pt;
+}
+#board-list{
+  margin-top: 50px;
+}
+#view-left{
+  min-height: 500px;
+  max-width: 900px;
+  min-width: 900px;
+  
+  margin-right: 30px;
+}
+#wrap-inner-view{
+  padding-top: 150px;
+  min-height: 1100px;
+  display: flex;
+  justify-content: center;
+}
+#view-post{
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+  border: solid 1px grey;
+}
+#post-title{
+  font-size: 2em;
+  padding-bottom: 5px;
+}
+#post-body{
+  text-align: left;
+  padding: 20px;
+  flex: 1;
+}
+#post-authorandtype{
+  float:left;
+  padding:5px 20px;
+}
+#post-views{
+  float:right;
+  padding:5px 20px;
+}
+#post-thumbuparea{
+  height: 100px;
+}
+#post-head hr{
+  margin: 0;
 }

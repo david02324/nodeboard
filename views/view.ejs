@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title><%= title %> 조회</title>
+        <title><%= id %> 조회</title>
         <link rel="stylesheet" href="/css/bootstrap.min.css">
         <link rel="stylesheet" href="/stylesheets/style.css">
         <link rel="stylesheet" href="/stylesheets/menu-button.css">
@@ -9,6 +9,29 @@
     <body>
         <%-include('sidebar')%>
         <%-include('navi-bar')%>
+        <div id="content">
+            <div id="wrap-inner-view">
+                <div id="view-left">
+                    <div id="view-post">
+                        <div id="post-head">
+                            <div id="post-title"><%=title%></div>
+                            <hr>
+                            <div id="post-authorandtype"><%=author%> / <%=type%></div>
+                            <div id="post-views">조회수 <%=views%></div>
+                            <div style="clear:both"></div>
+                            <hr>
+                        </div>
+                        <div id="post-body">
+                            <%=content%>
+                        </div>
+                        <div id="post-thumbuparea">
+                            <%=thumbup%><br>추천하기버튼
+                        </div>
+                    </div>
+                </div>
+                <%-include('inner-right')%>
+            </div>
+        </div>
     </body>
     <script src="/jq/jquery.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
