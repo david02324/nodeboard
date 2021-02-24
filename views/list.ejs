@@ -13,9 +13,12 @@
             <div id="board-title">
                 <%=type%>
             </div>
+            <div id="wrap-upper">
+                <button type="button" class="btn btn-secondary" id="post-button" onclick="writePost()">글쓰기</button>
+            </div>
             <div id="wrap-inner">
                 <div id="inner-left">
-                    <table class="table table-striped">
+                    <table class="table">
                         <thead>
                         <tr>
                             <th>ID</th>
@@ -27,10 +30,10 @@
                         </thead>
                         <tbody>
                         <%  for(let post of postData){ %>
-                            <tr>
+                            <tr onmouseover="this.style.backgroundColor='#CCCCCC'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='/view?id=<%=post.ID%>'">
                                 <th><%=post.ID%></th>
                                 <th><%=post.AUTHOR%></th>
-                                <th><a href="/view?id=<%=post.ID%>"><%=post.TITLE%></a></th>
+                                <th><%=post.TITLE%></th>
                                 <th><%=post.VIEWS%></th>
                                 <th><%=post.THUMBUP%></th>
                             </tr>
@@ -45,4 +48,5 @@
     <script src="/jq/jquery.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="javascripts/effect.js"></script>
+    <script src="javascripts/functions.js"></script>
 </html>

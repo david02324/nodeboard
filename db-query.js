@@ -50,5 +50,18 @@ var viewPost = function(id,callback){
         }
     });
 }
+
+var writePost = function(data,callback){
+    // 쿼리에 insert
+    db.query('INSERT INTO POST (`TITLE`, `AUTHOR`, `TYPE`, `CONTENT`, `PASSWORD`) VALUES (?, ?, ?, ?, ?)',
+        [data.title,data.author,data.type,data.content,data.password],function(err){
+            if (err)
+                callback(false);
+            else
+                callback(true);
+        });
+}
+
 exports.getList = getList;
 exports.viewPost = viewPost;
+exports.writePost = writePost;

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>글쓰기</title>
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/stylesheets/style.css">
+        <link rel="stylesheet" href="/stylesheets/menu-button.css">
+    </head>
+    <body>
+        <%-include('sidebar')%>
+        <%-include('navi-bar')%>
+        <div id="content">
+            <div id="wrap-inner-post">
+                <div id="write-info">
+                    <span>글쓰기</span>
+                </div>
+                <form action="/write/submit" accept-charset="utf-8" name="post-data" method="post">
+                    <div id="write-box">
+                        <input type="text" id="write-title" name="title" placeholder="제목" required minlength="2" maxlength="50">
+                        <hr>
+                        <textarea id="write-content" name="content" placeholder="내용" required minlength="10" maxlength="60000"></textarea>
+                    </div>
+                    <div id="write-bar">
+                        <input type="text" id="write-author" name="author" placeholder="작성자" required minlength="2" maxlength="10">
+                        <input type="password" id="write-password" name="password" placeholder="비밀번호" required minlength="4" maxlength="20">
+                        <button type="submit" class="btn btn-primary" id="write-submit-btn">글쓰기</button>
+                        <button type="button" class="btn btn-danger" id="write-cancel-btn" onclick="writeCancel()">취소</button>
+                        <select class="form-control" id="type-dropdown" name="type">
+                            <option>자유게시판</option>
+                            <option>유머게시판</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+    <script src="/jq/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="javascripts/effect.js"></script>
+    <script src="javascripts/functions.js"></script>
+</html>

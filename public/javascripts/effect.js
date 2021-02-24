@@ -17,3 +17,7 @@ $('#menu-button-line-wrapper').click(function(){
             $('#menu-button').animate({left:'0px'},duration);
         };
 });
+
+function postMouseOver(){
+    this.style.background="black";
+};
