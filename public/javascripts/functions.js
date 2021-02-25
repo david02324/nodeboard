@@ -19,4 +19,20 @@ function writeCancel(){
     if (check){
         history.back();
     }
-}
+};
+
+function removePost(){
+    var form = document.createElement("form");
+    form.setAttribute("method", 'post');
+    form.setAttribute("action", '/view?id='+id+'/delete');
+
+    var hiddenField = document.createElement('input');
+    hiddenField.setAttribute("type", "hidden");
+    hiddenField.setAttribute("name", 'plainPassword');
+    var plainPassword = document.getElementById('delete-password').value;
+    hiddenField.setAttribute("value",plainPassword);
+    form.appendChild(hiddenField);
+
+    document.body.appendChild(form);
+    form.submit();
+};

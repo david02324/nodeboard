@@ -1,4 +1,5 @@
 var db = require('./db-connect')
+var useCrypto = require('./crypto');
 
 var getList = function(amount,type,page,callback){
     // 전체 글 조회
@@ -62,6 +63,28 @@ var writePost = function(data,callback){
         });
 }
 
+var checkPassword = function(id,plainPassword,callback){
+    useCrypto(plainPassword,function(password){
+        db.query('SELECT PASSWORD FROM POST WHERE ID=?',[id],function(err,savedPassword){
+            if (savedPassword[0].PASSWORD==password)
+                callback(true);
+            else
+                callback(false);
+        });
+    });
+}
+
+var deletePost = function(id,callback){
+    db.query('DELETE FROM POST WHERE ID=?',[id],(err)=>{
+        if (err)
+            callback(false);
+        else
+            callback(true);
+    });
+};
+
 exports.getList = getList;
 exports.viewPost = viewPost;
 exports.writePost = writePost;
+exports.checkPassword = checkPassword;
+exports.deletePost = deletePost;

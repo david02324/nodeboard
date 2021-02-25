@@ -16,8 +16,7 @@ p{
   position: fixed;
 }
 #content{
-  height: 100%;
-  min-height: 1200px;
+  min-height: 100%;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -71,15 +70,15 @@ p{
 }
 #view-left{
   min-height: 500px;
-  max-width: 900px;
-  min-width: 900px;
+  width: 900px;
   margin-right: 30px;
 }
 #wrap-inner-view{
-  padding-top: 150px;
+  margin-top: 150px;
   min-height: 1100px;
   display: flex;
   justify-content: center;
+  margin-bottom: 150px;
 }
 #view-post{
   display: flex;
@@ -157,4 +156,13 @@ hr{
   display: inline;
   float:left;
   height: 36px;
+}
+#modify-btn,#delete-btn{
+  margin: 2px;
+  float:right;
+}
+#delete-password{
+  float:right;
+  margin: 2px;
+  font-size: 21px;
 }
