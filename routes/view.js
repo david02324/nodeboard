@@ -6,6 +6,9 @@ var useCrypto = require('../crypto');
 router.get('/', function(req, res, next) {
     let {id} = req.query;
     db.viewPost(id,(response)=>{
+        if (response===false){
+            res.render('error');
+        } else{
         res.render('view', {id: id,
             title: response.TITLE,
             author: response.AUTHOR,
@@ -14,6 +17,7 @@ router.get('/', function(req, res, next) {
             views: response.VIEWS,
             isLogined: response.isLogined,
             thumbup: response.THUMBUP});
+        }
     });
 });
 

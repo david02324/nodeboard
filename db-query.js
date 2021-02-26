@@ -3,7 +3,7 @@ var useCrypto = require('./crypto');
 
 var getList = function(amount,type,page,callback){
     // 전체 글 조회
-    if (type===undefined){
+    if (type=='all'){
         db.query('SELECT COUNT(*) AS COUNT FROM POST',function(err,count){
             if (err)
                 console.log('에러 발생 : ' + err);
@@ -44,8 +44,9 @@ var viewPost = function(id,callback){
     db.query('UPDATE POST SET VIEWS=VIEWS+1 WHERE ID=?',[id],function(){});
     // 글 조회
     db.query('SELECT * FROM POST WHERE ID=?',[id],function(err,post){
-        if(err){
+        if(err || post[0] === undefined){
             console.log('에러 발생 : ' + err);
+            callback(false);
         } else{
             callback(post[0]);
         }
@@ -83,8 +84,25 @@ var deletePost = function(id,callback){
     });
 };
 
+var viewForUpdatePost = function(id,callback){
+    db.query('SELECT * FROM POST WHERE ID=?',[id],(err,post)=>{
+        if (err)
+            callback(false);
+        else
+            callback(post[0]);
+    });
+};
+
+var updatePost = function(data,callback){
+    db.query('UPDATE POST SET TITLE=? , CONTENT=? WHERE PASSWORD=?',[data.title,data.content,data.code],(err)=>{
+        callback(err);
+    });
+}
+
 exports.getList = getList;
 exports.viewPost = viewPost;
 exports.writePost = writePost;
 exports.checkPassword = checkPassword;
 exports.deletePost = deletePost;
+exports.viewForUpdatePost = viewForUpdatePost;
+exports.updatePost = updatePost;

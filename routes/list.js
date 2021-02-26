@@ -14,10 +14,10 @@ router.get('/list', function(req,res,next){
   //console.log(req.headers['x-forwarded-for'] ||  req.connection.remoteAddress);
   if (page===undefined)
     page = 1;
+  if (type===undefined)
+    type = 'all';
   db.getList(20,type,page,(response,maxPage)=>{
-    if (type===undefined)
-      type = '전체글 보기';
-    res.render('list',{postData : response,type : type,maxPage : maxPage});
+    res.render('list',{postData : response,type : type,page : page,maxPage : maxPage});
   });
 });
 

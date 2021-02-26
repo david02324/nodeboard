@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>수정하기</title>
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/stylesheets/style.css">
+        <link rel="stylesheet" href="/stylesheets/menu-button.css">
+    </head>
+    <body>
+        <%-include('sidebar')%>
+        <%-include('navi-bar')%>
+        <div id="content">
+            <div id="wrap-inner-post">
+                <div id="write-info">
+                    <span>수정하기</span>
+                </div>
+                <form action="/update/submit" accept-charset="utf-8" name="post-data" method="post">
+                    <input type="hidden" name="id" value="<%=id%>">
+                    <input type="hidden" name="code" value="<%=code%>">
+                    <div id="write-box">
+                        <input type="text" id="write-title" name="title" value="<%=title%>"required minlength="2" maxlength="50">
+                        <hr>
+                        <textarea id="write-content" name="content" required minlength="10" maxlength="60000"><%=content%></textarea>
+                    </div>
+                    <div id="write-bar">
+                        <input type="text" id="write-author" placeholder="<%=author%>" readonly>
+                        <button type="submit" class="btn btn-primary" id="write-submit-btn">수정하기</button>
+                        <button type="button" class="btn btn-danger" id="write-cancel-btn" onclick="writeCancel()">취소</button>
+                        <select class="form-control" id="type-dropdown">
+                            <option><%=type%></option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+    <script src="/jq/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="javascripts/effect.js"></script>
+    <script src="javascripts/functions.js"></script>
+</html>

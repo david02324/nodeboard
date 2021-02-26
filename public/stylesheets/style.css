@@ -39,13 +39,17 @@ p{
   justify-content: center;
 }
 #inner-left{
-  min-height: 1050px;
+  min-height: 1100px;
   min-width: 900px;
   border: solid 1px grey;
   margin-right: 30px;
+  position: relative;
+}
+#inner-left tr{
+  height: 50px;
 }
 #inner-right{
-  min-height: 1000px;
+  min-height: 1100px;
   min-width: 250px;
   font-size: 10pt;
 }
@@ -98,6 +102,9 @@ p{
 #post-authorandtype{
   float:left;
   padding:5px 20px;
+}
+#post-authorandtype a{
+  color: black;
 }
 #post-views{
   float:right;
@@ -165,4 +172,26 @@ hr{
   float:right;
   margin: 2px;
   font-size: 21px;
+}
+#pages{
+  height: 50px;
+  width: 900px;
+  margin: 0 auto;
+  position: absolute;
+  bottom: 0;
+  font-size: 20px;
+}
+#pages hr{
+  margin-bottom: 10px;
+}
+#pages input{
+  width: 40px;
+  font-size: 18px;
+  position: absolute;
+  right: 50px;
+}
+#pages button{
+  position: absolute;
+  right: 0px;
+  bottom: 4px;
 }

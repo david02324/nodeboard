@@ -11,7 +11,11 @@
         <%-include('navi-bar')%>
         <div id="content">
             <div id="board-title">
-                <%=type%>
+                <% if (type=='all') { %>
+                    전체글 보기
+                <% } else { %>
+                    <%=type%>
+                <% } %>
             </div>
             <div id="wrap-upper">
                 <button type="button" class="btn btn-secondary" id="post-button" onclick="writePost()">글쓰기</button>
@@ -40,6 +44,18 @@
                         <% } %>
                         </tbody>
                     </table>
+                    <div id="pages">
+                        <hr>
+                        <% if(page>1) { %>
+                            <a class="btn btn-default" href="/list?type=<%=type%>&page=<%=Number(page)-1%>" role="button">이전</a>
+                        <% } %>
+                        <%=page%> of <%=maxPage%>
+                        <% if(page < maxPage) { %>
+                            <a class="btn btn-default" href="/list?type=<%=type%>&page=<%=Number(page)+1%>" role="button">다음</a>
+                        <% } %>
+                        <input type="text" placeholder="<%=page%>" id="target-page">
+                        <button class="btn btn-default" onclick="location.href='/list?type=<%=type%>&page='+$('#target-page').val()" role="button">이동</a>
+                    </div>
                 </div>
                 <%-include('inner-right')%>
             </div>
