@@ -36,3 +36,27 @@ function removePost(){
     document.body.appendChild(form);
     form.submit();
 };
+
+function searchPost(type){
+    location.href="/search?type="+type+"&mode="+$('#search-mode').val()+"&keyword="+$('#search-keyword').val();
+};
+
+function movePage(target,isSearch,type,mode,keyword,maxPage){
+    console.log(typeof maxPage);
+    if (target < 1 || target > maxPage){
+        alert('페이지 범위를 벗어났습니다!');
+        $('#target-page').val('');
+        return;
+    }
+
+    var url = '';
+
+    if (isSearch)
+        url = '/search?mode='+mode+'&keyword='+keyword+'&';
+    else
+        url = '/list?';
+    
+    url += 'type='+type+'&page='+target;
+
+    location.href = url;
+}

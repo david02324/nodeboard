@@ -99,6 +99,51 @@ var updatePost = function(data,callback){
     });
 }
 
+var searchPost = function(data,amount,callback){
+    // DB 칼럼명에 맞게 변경
+    if (data.mode=='제목')
+        data.mode='TITLE';
+    else if (data.mode=='작성자')
+        data.mode='AUTHOR';
+    else if (data.authormode=='내용')
+        data.mode='CONTENT';
+
+
+    if(data.type=='all'){
+        db.query('SELECT COUNT(*) AS COUNT FROM POST WHERE ?? LIKE ?',[data.mode,"%"+data.keyword+"%"],(err,count)=>{
+            if (err)
+                callback(false);
+            else{
+                count = count[0].COUNT;
+                var maxPage = Math.ceil(count / amount);
+
+                db.query('SELECT * FROM POST WHERE ?? LIKE ? ORDER BY ID DESC LIMIT ?, ?',[data.mode,"%"+data.keyword+"%",(data.page-1)*amount,amount],(err,result)=>{
+                    if(err)
+                        callback(false);
+                    else
+                        callback(result,maxPage);
+                });
+            }
+        });
+    } else{
+        db.query('SELECT COUNT(*) AS COUNT FROM POST WHERE TYPE=? AND ?? LIKE ?',[data.type,data.mode,"%"+data.keyword+"%"],(err,count)=>{
+            if (err)
+                callback(false);
+            else{
+                count = count[0].COUNT;
+                var maxPage = Math.ceil(count / amount);
+
+                db.query('SELECT * FROM POST WHERE TYPE=? AND ?? LIKE ? ORDER BY ID DESC LIMIT ?, ?',[data.type,data.mode,"%"+data.keyword+"%",(data.page-1)*amount,amount],(err,result)=>{
+                    if(err)
+                        callback(false);
+                    else
+                        callback(result,maxPage);
+                });
+            }
+        });
+    }
+}
+
 exports.getList = getList;
 exports.viewPost = viewPost;
 exports.writePost = writePost;
@@ -106,3 +151,4 @@ exports.checkPassword = checkPassword;
 exports.deletePost = deletePost;
 exports.viewForUpdatePost = viewForUpdatePost;
 exports.updatePost = updatePost;
+exports.searchPost = searchPost;

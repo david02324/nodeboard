@@ -14,6 +14,7 @@ p{
   height: 50px;
   width: 100%;
   position: fixed;
+  z-index: 1;
 }
 #content{
   min-height: 100%;
@@ -37,6 +38,7 @@ p{
   margin: 0 auto;
   display: flex;
   justify-content: center;
+  margin-bottom: 10px;
 }
 #inner-left{
   min-height: 1100px;
@@ -194,4 +196,23 @@ hr{
   position: absolute;
   right: 0px;
   bottom: 4px;
+}
+#search-button{
+  float: right;
+  margin-right: 280px;
+}
+#search-keyword{
+  float: right;
+  margin-right: 5px;
+  margin-top: 1px;
+  font-size: 20px;
+}
+#search-mode{
+  width:120px;
+  float: right;
+  margin-right: 5px;
+}
+#board-title-search{
+  padding-top:50px;
+  font-size: 3em;
 }

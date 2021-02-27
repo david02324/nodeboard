@@ -9,15 +9,19 @@ router.get('/', function(req, res, next) {
 
 router.get('/list', function(req,res,next){
   let {type,page} = req.query;
-  //console.log(rip.getClientIp(req));
-  //console.log(req.ip);
-  //console.log(req.headers['x-forwarded-for'] ||  req.connection.remoteAddress);
+
   if (page===undefined)
     page = 1;
   if (type===undefined)
     type = 'all';
+  
+  var values = {};
+  values.page = page;
+  values.type = type;
+  values.isSearch = false;
+
   db.getList(20,type,page,(response,maxPage)=>{
-    res.render('list',{postData : response,type : type,page : page,maxPage : maxPage});
+    res.render('list',{postData : response,values : values,maxPage : maxPage});
   });
 });
 

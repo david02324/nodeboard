@@ -10,52 +10,78 @@
         <%-include('sidebar')%>
         <%-include('navi-bar')%>
         <div id="content">
-            <div id="board-title">
-                <% if (type=='all') { %>
-                    전체글 보기
-                <% } else { %>
-                    <%=type%>
-                <% } %>
-            </div>
+            <% if(values.isSearch) { %>
+                <div id="board-title-search">
+                    <% if (values.type == 'all') { %>
+                        모든 게시판에서 '<%=values.keyword%>' 검색 결과
+                    <% } else { %> 
+                        <%=values.type%>에서 '<%=values.keyword%>' 검색 결과
+                    <% } %>
+                </div>
+            <% } else { %>
+                <div id="board-title">
+                    <% if (values.type=='all') { %>
+                        전체글 보기
+                    <% } else { %>
+                        <%=values.type%>
+                    <% } %>
+                </div>
+            <% } %>
             <div id="wrap-upper">
-                <button type="button" class="btn btn-secondary" id="post-button" onclick="writePost()">글쓰기</button>
+                <% if(values.isSearch === false) { %>
+                    <button type="button" class="btn btn-secondary" id="post-button" onclick="writePost()">글쓰기</button>
+                <% } %>
+                <form action="/search" accept-charset="utf-8" method="get">
+                    <input type="hidden" name="type" value="<%=values.type%>">
+                    <button type="submit" class="btn btn-primary" id="search-button">검색</button>
+                    <input type="text" id="search-keyword" name="keyword" required minlength="2" maxlength="10">
+                    <select class="form-control" id="search-mode" name="mode">
+                        <option>제목</option>
+                        <option>작성자</option>
+                        <option>내용</option>
+                    </select>
+                </form>
             </div>
             <div id="wrap-inner">
                 <div id="inner-left">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>작성자</th>
-                            <th>제목</th>
-                            <th>조회수</th>
-                            <th>추천수</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <%  for(let post of postData){ %>
-                            <tr onmouseover="this.style.backgroundColor='#CCCCCC'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='/view?id=<%=post.ID%>'">
-                                <th><%=post.ID%></th>
-                                <th><%=post.AUTHOR%></th>
-                                <th><%=post.TITLE%></th>
-                                <th><%=post.VIEWS%></th>
-                                <th><%=post.THUMBUP%></th>
+                    <% if(maxPage > 0) { %>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>작성자</th>
+                                <th>제목</th>
+                                <th>조회수</th>
+                                <th>추천수</th>
                             </tr>
-                        <% } %>
-                        </tbody>
-                    </table>
-                    <div id="pages">
-                        <hr>
-                        <% if(page>1) { %>
-                            <a class="btn btn-default" href="/list?type=<%=type%>&page=<%=Number(page)-1%>" role="button">이전</a>
-                        <% } %>
-                        <%=page%> of <%=maxPage%>
-                        <% if(page < maxPage) { %>
-                            <a class="btn btn-default" href="/list?type=<%=type%>&page=<%=Number(page)+1%>" role="button">다음</a>
-                        <% } %>
-                        <input type="text" placeholder="<%=page%>" id="target-page">
-                        <button class="btn btn-default" onclick="location.href='/list?type=<%=type%>&page='+$('#target-page').val()" role="button">이동</a>
-                    </div>
+                            </thead>
+                            <tbody>
+                            <%  for(let post of postData){ %>
+                                <tr onmouseover="this.style.backgroundColor='#CCCCCC'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='/view?id=<%=post.ID%>'">
+                                    <th><%=post.ID%></th>
+                                    <th><%=post.AUTHOR%></th>
+                                    <th><%=post.TITLE%></th>
+                                    <th><%=post.VIEWS%></th>
+                                    <th><%=post.THUMBUP%></th>
+                                </tr>
+                            <% } %>
+                            </tbody>
+                        </table>
+                        <div id="pages">
+                            <hr>
+                            <% if(values.page>1) { %>
+                                <a class="btn btn-default" role="button" onclick="movePage('<%=Number(values.page)-1%>',<%=values.isSearch%>,'<%=values.type%>','<%=values.mode%>','<%=values.keyword%>',<%=maxPage%>)">이전</a>
+                            <% } %>
+                            <%=values.page%> of <%=maxPage%>
+                            <% if(values.page < maxPage) { %>
+                                <a class="btn btn-default" role="button" onclick="movePage('<%=Number(values.page)+1%>',<%=values.isSearch%>,'<%=values.type%>','<%=values.mode%>','<%=values.keyword%>',<%=maxPage%>)">다음</a>
+                            <% } %>
+                            <input type="text" placeholder="<%=values.page%>" id="target-page">
+                            <button class="btn btn-default" onclick="movePage($('#target-page').val(),<%=values.isSearch%>,'<%=values.type%>','<%=values.mode%>','<%=values.keyword%>',<%=maxPage%>)" role="button">이동</a>
+                        </div>
+                    <% } else { %>
+                        <div style="position: absolute; left: 25%; top: 45%; font-size: 40px;">검색 결과가 하나도 없습니다!</div>
+                    <% } %>
                 </div>
                 <%-include('inner-right')%>
             </div>
