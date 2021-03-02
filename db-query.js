@@ -144,6 +144,70 @@ var searchPost = function(data,amount,callback){
     }
 }
 
+var thumbup = function(id,ip,callback){
+    // 추천수 카운트 변수
+    var count;
+
+    // 해당 글의 추천 수를 새로운 DB에서 카운트 해서 가져오기
+    db.query('SELECT COUNT(*) AS COUNT FROM THUMBUPS WHERE POST_ID=?',[id],(err,result)=>{
+        if (err){
+            errcode = 1
+            callback(false,errcode);
+            console.log(err);
+            return;
+        }
+        count = result[0].COUNT;
+    });
+
+    // 해당 글을 추천한 ip리스트 가져오기
+    db.query('SELECT USER_IP FROM THUMBUPS WHERE POST_ID=?',[id],(err,result)=>{
+        if (err){
+            errcode = 2
+            callback(false,errcode);
+            console.log(err);
+            return;
+        }
+
+
+        // 해당 ip가 이미 추천한 ip인지 확인
+        for (let savedIp of result)
+            if (savedIp.USER_IP == ip)
+                var forDelete = true;
+
+        if (forDelete){
+            // 추천 취소
+            db.query('DELETE FROM THUMBUPS WHERE POST_ID=? AND USER_IP=?',[id,ip],(err,hi)=>{
+                if (err){
+                    errcode = 3
+                    console.log(err);
+                    callback(false,errcode);
+                    return;
+                }
+                
+                count--;
+                // 해당 글의 추천수 조정
+                db.query('UPDATE POST SET THUMBUP=? WHERE ID=?',[count,id],()=>{});
+                callback('deleted',count);
+            });
+        } else{
+            // 추천 진행
+            db.query('INSERT INTO THUMBUPS (`POST_ID`, `USER_IP`) VALUES (?,?)',[id,ip],(err)=>{
+                if (err){
+                    errcode = 4
+                    callback(false,errcode);
+                    console.log(err);
+                    return;
+                }
+
+            count++;
+                // 해당 글의 추천수 조정
+                db.query('UPDATE POST SET THUMBUP=? WHERE ID=?',[count,id],()=>{});
+                callback('success',count);
+            });
+        }
+    });
+}
+
 exports.getList = getList;
 exports.viewPost = viewPost;
 exports.writePost = writePost;
@@ -152,3 +216,4 @@ exports.deletePost = deletePost;
 exports.viewForUpdatePost = viewForUpdatePost;
 exports.updatePost = updatePost;
 exports.searchPost = searchPost;
+exports.thumbup = thumbup;

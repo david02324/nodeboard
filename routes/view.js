@@ -36,4 +36,10 @@ router.post('/delete',function(req,res,next){
     });
 });
 
+router.post('/thumbup',function(req,res,next){
+    db.thumbup(req.body.id,req.ip,(response,count)=>{
+        res.send({result: response, count: count})
+    });
+});
+
 module.exports = router;

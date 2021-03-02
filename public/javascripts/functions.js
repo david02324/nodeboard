@@ -59,4 +59,19 @@ function movePage(target,isSearch,type,mode,keyword,maxPage){
     url += 'type='+type+'&page='+target;
 
     location.href = url;
-}
+};
+
+function thumbup(id){
+    $.ajax({
+        url: '/view/thumbup',
+        datatype: 'json',
+        type: 'POST',
+        data: {id:id},
+        success: function(result){
+            if (result.result)
+                $('#thumbup-count').text(result.count);
+            else
+                alert('에러가 발생했습니다. ERRORCODE : '+result.count);
+        }
+    })
+};

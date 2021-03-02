@@ -57,7 +57,7 @@
                             </thead>
                             <tbody>
                             <%  for(let post of postData){ %>
-                                <tr onmouseover="this.style.backgroundColor='#CCCCCC'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='/view?id=<%=post.ID%>'">
+                                <tr onmouseover="this.style.backgroundColor='#CCCCCC'; this.style.cursor='pointer'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='/view?id=<%=post.ID%>'">
                                     <th><%=post.ID%></th>
                                     <th><%=post.AUTHOR%></th>
                                     <th><%=post.TITLE%></th>
