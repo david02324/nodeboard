@@ -21,7 +21,10 @@ router.get('/list', function(req,res,next){
   values.isSearch = false;
 
   db.getList(20,type,page,(response,maxPage)=>{
-    res.render('list',{postData : response,values : values,maxPage : maxPage});
+    db.bestPosts((bestPosts)=>{
+      if (bestPosts)
+        res.render('list',{postData : response,values : values,maxPage : maxPage,bestPosts: bestPosts});
+    });
   });
 });
 

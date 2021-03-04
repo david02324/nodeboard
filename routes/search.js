@@ -18,7 +18,12 @@ router.get('/',function(req,res,next){
         if (response===false)
             res.render('error');
         else
-            res.render('list',{postData: response,values: data,maxPage: maxPage});
+            db.bestPosts((bestPosts)=>{
+                if (bestPosts)
+                    res.render('list',{postData: response,values: data,maxPage: maxPage,bestPosts: bestPosts});
+                else
+                    res.render('error');
+            });
     });
 });
 

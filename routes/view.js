@@ -6,18 +6,27 @@ var useCrypto = require('../crypto');
 router.get('/', function(req, res, next) {
     let {id} = req.query;
     db.viewPost(id,(response)=>{
-        if (response===false){
+        if (response===false)
             res.render('error');
-        } else{
-        res.render('view', {id: id,
-            title: response.TITLE,
-            author: response.AUTHOR,
-            type: response.TYPE,
-            content: response.CONTENT,
-            views: response.VIEWS,
-            isLogined: response.isLogined,
-            thumbup: response.THUMBUP});
-        }
+        else
+            db.bestPosts((bestPosts)=>{
+                if (bestPosts){
+                    db.getReply(id,(replyList)=>{
+                        res.render('view', {id: id,
+                            title: response.TITLE,
+                            author: response.AUTHOR,
+                            type: response.TYPE,
+                            content: response.CONTENT,
+                            views: response.VIEWS,
+                            isLogined: response.isLogined,
+                            thumbup: response.THUMBUP,
+                            bestPosts: bestPosts,
+                            replyList: replyList});
+                    });
+                } else{
+                    res.render('error');
+                }
+            });
     });
 });
 
@@ -39,6 +48,18 @@ router.post('/delete',function(req,res,next){
 router.post('/thumbup',function(req,res,next){
     db.thumbup(req.body.id,req.ip,(response,count)=>{
         res.send({result: response, count: count})
+    });
+});
+
+router.post('/deleteReply',function(req,res,next){
+    db.deleteReply(req.body.id,req.body.plainPassword,(code)=>{
+        res.send({code: code});
+    });
+});
+
+router.post('/refreshReply',function(req,res,next){
+    db.getReply(req.body.id,(replyList)=>{
+        res.send({replyList: replyList});
     });
 });
 

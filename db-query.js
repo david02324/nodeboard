@@ -176,7 +176,7 @@ var thumbup = function(id,ip,callback){
 
         if (forDelete){
             // 추천 취소
-            db.query('DELETE FROM THUMBUPS WHERE POST_ID=? AND USER_IP=?',[id,ip],(err,hi)=>{
+            db.query('DELETE FROM THUMBUPS WHERE POST_ID=? AND USER_IP=?',[id,ip],(err)=>{
                 if (err){
                     errcode = 3
                     console.log(err);
@@ -208,6 +208,53 @@ var thumbup = function(id,ip,callback){
     });
 }
 
+var bestPosts = function(callback){
+    db.query('SELECT ID, TITLE FROM POST ORDER BY THUMBUP DESC LIMIT 3',(err,result)=>{
+        if (err)
+            callback(false);
+        else
+            callback(result);
+    });
+};
+
+var getReply = function(postId,callback){
+    db.query('SELECT ID,POST_ID,ROOT_REPLY_ID,AUTHOR,CONTENT,isLogined FROM REPLY WHERE POST_ID=?',[postId],(err,result)=>{
+        if (err){
+            console.log(err);
+            callback(false);
+        }
+        else{
+            callback(result);
+        }
+    });
+}
+
+var deleteReply = function(id,plainPassword,callback){
+    useCrypto(plainPassword,(password)=>{
+        db.query('SELECT PASSWORD FROM REPLY WHERE ID=?',[id],(err,result)=>{
+            if (err){
+                callback(1);
+                console.log(err);
+                return;
+            }
+
+            if (result[0].PASSWORD == password){
+                db.query('DELETE FROM REPLY WHERE ID=?',[id],(err)=>{
+                    if (err){
+                        callback(2);
+                        console.log(err);
+                        return;
+                    }
+
+                    callback(-1);
+                });
+            } else{
+                callback(0);
+            }
+        });
+    });
+};
+
 exports.getList = getList;
 exports.viewPost = viewPost;
 exports.writePost = writePost;
@@ -217,3 +264,6 @@ exports.viewForUpdatePost = viewForUpdatePost;
 exports.updatePost = updatePost;
 exports.searchPost = searchPost;
 exports.thumbup = thumbup;
+exports.bestPosts = bestPosts;
+exports.getReply = getReply;
+exports.deleteReply = deleteReply;

@@ -16,18 +16,14 @@
         </table>
     </div>
     <div id="best-posts">
-        <span>(추천글)</span>
+        <span>추천글</span>
         <table class="table">
             <tbody>
-            <tr>
-                <td>샘플 추천글 1</td>
-            </tr>
-            <tr>
-                <td>샘플 추천글 2</td>
-            </tr>
-            <tr>
-                <td>샘플 추천글 3</td>
-            </tr>
+                <% for (let bestPost of bestPosts) { %>
+                    <tr onmouseover="this.style.backgroundColor='#CCCCCC'; this.style.cursor='pointer'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='/view?id=<%=bestPost.ID%>'">
+                        <td><%=bestPost.TITLE%></td>
+                    </tr>
+                <% } %>
             </tbody> 
         </table>
     </div>

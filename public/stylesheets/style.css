@@ -221,3 +221,19 @@ hr{
   padding-top:50px;
   font-size: 3em;
 }
+#reply-area{
+  margin-top: 20px;
+  border: 1px solid black;
+}
+#reply-bar, #reply-body{
+  text-align:left;
+  margin: 1px;
+  margin-left: 10px;
+}
+#reply-bar{
+  font-size: 20px;
+}
+#reply-bar > a{
+  float: right;
+  margin-right: 10px;
+}

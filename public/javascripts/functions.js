@@ -75,3 +75,55 @@ function thumbup(id){
         }
     })
 };
+
+function refreshReply(postId){
+    $.ajax({
+        url: '/view/refreshReply',
+        datatype: 'json',
+        type: 'POST',
+        data: {id : postId},
+        success: function(result){
+            $('#reply-area').empty();
+            replyList = result.replyList;
+            for (let reply of replyList){
+                var body = `
+                <div id="reply">
+                <div id="reply-bar">
+                ${reply.AUTHOR}
+                <a onclick="deleteReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>
+                </div>
+                <hr>
+                <div id="reply-body">${reply.CONTENT}</div>
+                </div>
+                `;
+                var replyDiv = $(body);
+                $('#reply-area').append(replyDiv);
+            }
+        }
+    });
+};
+
+function deleteReply(id,postId){
+    var plainPassword = prompt('댓글 작성시 입력한 비밀번호를 입력하세요');
+    if (plainPassword == '' || plainPassword == undefined)
+        return;
+    $.ajax({
+        url: '/view/deleteReply',
+        datatype: 'json',
+        type: 'POST',
+        data: {
+            id : id,
+            plainPassword : plainPassword,
+        },
+        success: function(result){
+            if (result.code == -1){
+                refreshReply(postId);
+            } else{
+                if (result.code == 0)
+                    alert('비밀번호가 일치하지 않습니다.');
+                else
+                    alert('에러가 발생했습니다. ERRORCODE : '+result.code);
+            }
+        }
+    })
+}
