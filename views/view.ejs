@@ -22,7 +22,9 @@
                             <hr>
                         </div>
                         <div id="post-body">
-                            <%=content%>
+                            <pre>
+<%=content%>
+                            </pre>
                         </div>
                         <hr>
                         <div id="post-thumbuparea">
@@ -51,17 +53,10 @@
                         </div>
                         <% } %>
                     </div>
+                    <div id="reply-upper">
+                        <a onclick="showReply(<%=id%>)" onmouseover="this.style.cursor='pointer'">댓글보기</a>
+                    </div>
                     <div id="reply-area">
-                        <% for (let reply of replyList) { %>
-                        <div id="reply">
-                            <div id="reply-bar">
-                                <%=reply.AUTHOR%>
-                                <a onclick="deleteReply(<%=reply.ID%>,<%=id%>)" onmouseover="this.style.cursor='pointer'">X</a>
-                            </div>
-                            <hr>
-                            <div id="reply-body"><%=reply.CONTENT%></div>
-                        </div>
-                        <% } %>
                     </div>
                 </div>
                 <%-include('inner-right')%>

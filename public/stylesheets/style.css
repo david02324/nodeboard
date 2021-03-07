@@ -81,10 +81,10 @@ p{
 }
 #wrap-inner-view{
   margin-top: 150px;
-  min-height: 1100px;
+  min-height: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: 150px;
+  padding-bottom: 50px;
 }
 #view-post{
   display: flex;
@@ -100,6 +100,10 @@ p{
   text-align: left;
   padding: 20px;
   flex: 1;
+}
+#post-body pre{
+  overflow: auto;
+  white-space: pre-wrap;
 }
 #post-authorandtype{
   float:left;
@@ -221,19 +225,61 @@ hr{
   padding-top:50px;
   font-size: 3em;
 }
+#reply-upper{
+  margin-top: 10px;
+  text-align: left;
+}
 #reply-area{
-  margin-top: 20px;
+  margin-top: 5px;
+}
+#reply{
   border: 1px solid black;
+  margin-bottom: 5px;
 }
 #reply-bar, #reply-body{
   text-align:left;
   margin: 1px;
   margin-left: 10px;
+  overflow:hidden;
+  word-wrap:break-word;
 }
 #reply-bar{
   font-size: 20px;
 }
-#reply-bar > a{
+#reply-bar a, #reply-bar span{
   float: right;
   margin-right: 10px;
+}
+#reply-write-form{
+  display: flex;
+  margin-top: 10px;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+#child-write-form{
+  display: flex;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-top: 1px solid grey;
+  border-bottom: 1px solid grey;
+  margin-left:20px;
+}
+#reply-write-form input,#reply-write-form textarea,#child-write-form input,#child-write-form textarea{
+  border: none;
+}
+#reply-write-form textarea,#child-write-form textarea{
+  resize: none;
+  border-left: 2px solid whitesmoke;
+  border-right: 2px solid whitesmoke;
+  flex: 1;
+}
+#reply-write-form button,#child-write-form button{
+  margin: 3px;
+  width: 54px;
+}
+#reply-info{
+  display: flex;
+  flex-direction: column;
+  width: 150px;
+  margin-right: 5px;
 }

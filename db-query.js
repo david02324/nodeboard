@@ -57,8 +57,10 @@ var writePost = function(data,callback){
     // 쿼리에 insert
     db.query('INSERT INTO POST (`TITLE`, `AUTHOR`, `TYPE`, `CONTENT`, `PASSWORD`) VALUES (?, ?, ?, ?, ?)',
         [data.title,data.author,data.type,data.content,data.password],function(err){
-            if (err)
+            if (err){
+                console.log(err);
                 callback(false);
+            }
             else
                 callback(true);
         });
@@ -94,7 +96,7 @@ var viewForUpdatePost = function(id,callback){
 };
 
 var updatePost = function(data,callback){
-    db.query('UPDATE POST SET TITLE=? , CONTENT=? WHERE PASSWORD=?',[data.title,data.content,data.code],(err)=>{
+    db.query('UPDATE POST SET TITLE=? , CONTENT=? WHERE ID=? AND PASSWORD=?',[data.title,data.content,data.id,data.code],(err)=>{
         callback(err);
     });
 }
@@ -255,6 +257,32 @@ var deleteReply = function(id,plainPassword,callback){
     });
 };
 
+var writeReply = function(data,callback){
+    useCrypto(data.password,(password)=>{
+        if (data.rootReplyId == ''){
+            db.query('INSERT INTO REPLY (`POST_ID` ,`AUTHOR`, `CONTENT`, `isLogined`, `PASSWORD`) VALUES (?, ?, ?, ?, ?)',[data.postId,data.writer,data.content,data.isLogined,password],(err)=>{
+                if(err){
+                    callback(1);
+                    console.log(err);
+                    return;
+                } else{
+                    callback(-1);
+                }
+            });
+        } else{
+            db.query('INSERT INTO REPLY (`POST_ID` ,`AUTHOR`, `CONTENT`, `isLogined`, `ROOT_REPLY_ID`, `PASSWORD`) VALUES (?, ?, ?, ?, ?, ?)',[data.postId,data.writer,data.content,data.isLogined,data.rootReplyId,password],(err)=>{
+                if(err){
+                    callback(1);
+                    console.log(err);
+                    return;
+                } else{
+                    callback(-1);
+                }
+            });
+        }
+    });
+};
+
 exports.getList = getList;
 exports.viewPost = viewPost;
 exports.writePost = writePost;
@@ -267,3 +295,4 @@ exports.thumbup = thumbup;
 exports.bestPosts = bestPosts;
 exports.getReply = getReply;
 exports.deleteReply = deleteReply;
+exports.writeReply = writeReply;

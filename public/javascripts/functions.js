@@ -86,21 +86,63 @@ function refreshReply(postId){
             $('#reply-area').empty();
             replyList = result.replyList;
             for (let reply of replyList){
-                var body = `
-                <div id="reply">
-                <div id="reply-bar">
-                ${reply.AUTHOR}
-                <a onclick="deleteReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>
-                </div>
-                <hr>
-                <div id="reply-body">${reply.CONTENT}</div>
-                </div>
-                `;
-                var replyDiv = $(body);
-                $('#reply-area').append(replyDiv);
+                if (reply.ROOT_REPLY_ID == null){
+                    var body = `
+                    <div id="reply" class="${reply.ID}">
+                    <div id="reply-bar">
+                    ${reply.AUTHOR}
+                    <a onclick="deleteReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>
+                    <a onclick="writeChildReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">[답글]</a>
+                    </div>
+                    <hr>
+                    <div id="reply-body">${reply.CONTENT}</div>
+                    </div>
+                    `;
+                    var replyDiv = $(body);
+                    $('#reply-area').append(replyDiv);
+                } else{
+                    var body = `
+                    <div id="reply">
+                    <div id="reply-bar">
+                    ${reply.AUTHOR}
+                    <a onclick="deleteReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>
+                    </div>
+                    <hr>
+                    <div id="reply-body">${reply.CONTENT}</div>
+                    </div>
+                    `;
+                    var replyDiv = $(body);
+                    replyDiv.css('margin-left','20px');
+                    $('.'+reply.ROOT_REPLY_ID).after(replyDiv);
+                }
             }
         }
     });
+};
+
+function showReply(postId){
+    $('#reply-upper').empty();
+    var body = `
+    <span>댓글</span>
+    <a onclick="refreshReply(${postId})" onmouseover="this.style.cursor='pointer'"><img src="/images/refresh.svg" alt="새로고침"></a>
+    `
+    $('#reply-upper').append($(body));
+
+    refreshReply(postId);
+
+    body = `
+    <div id="reply-write-form">
+        <div id="reply-info">
+            <input type="text" id="reply-writer" placeholder="작성자" value="익명">
+            <hr>
+            <input type="password" id="reply-password" placeholder="비밀번호" placeholder="제목">
+        </div>
+        <textarea id="reply-content" placeholder="내용"></textarea>
+        <button type="button" class="btn btn-dark" onclick="writeReply(${postId},null)">작성</button>
+        </div>
+    `
+
+    $('#view-left').append($(body));
 };
 
 function deleteReply(id,postId){
@@ -125,5 +167,69 @@ function deleteReply(id,postId){
                     alert('에러가 발생했습니다. ERRORCODE : '+result.code);
             }
         }
-    })
-}
+    });
+};
+
+function writeReply(postId,rootReplyId){
+    if (rootReplyId === null)
+        $('#child-write-form').remove();
+
+    var writer = $('#reply-writer').val();
+    var password = $('#reply-password').val();
+    var content = $('#reply-content').val();
+    var isLogined = 0;
+
+    if (writer.length < 2){
+        alert('작성자를 2자 이상 입력해주세요');
+        return;
+    } else if(writer.length > 10){
+        alert('작성자는 최대 10자를 넘을 수 없습니다');
+        return;
+    } else if (password.length < 4){
+        alert('비밀번호를 4자 이상 입력해주세요');
+        return;
+    } else if (password.length > 20){
+        alert('비밀번호는 최대 20자를 넘을 수 없습니다');
+        return;
+    } else if (content.length < 2){
+        alert('내용을 2자 이상 입력해주세요');
+        return;
+    } else if (content.length > 1000){
+        alert('내용은 최대 1000자를 넘을 수 없습니다');
+        return;
+    }
+
+    var data = {writer,password,rootReplyId,isLogined,content,postId};
+    
+    $.ajax({
+        url: '/view/writeReply',
+        datatype: 'json',
+        type: 'POST',
+        data: data,
+        success: function(result){
+            if (result.code == -1){
+                refreshReply(postId);
+            } else{
+                alert('에러가 발생했습니다. ERRORCODE : '+result.code);
+            }
+            $('#reply-content').val('');
+        }
+    });
+};
+
+function writeChildReply(rootId,postId){
+    $('#child-write-form').remove();
+    var form = `
+    <div id="child-write-form">
+    <div id="reply-info">
+        <input type="text" id="reply-writer" placeholder="작성자" value="익명">
+        <hr>
+        <input type="password" id="reply-password" placeholder="비밀번호" placeholder="제목">
+    </div>
+    <textarea id="reply-content" placeholder="내용"></textarea>
+    <button type="button" class="btn btn-dark" onclick="writeReply(${postId},${rootId})">작성</button>
+    </div>
+    `
+    var formDiv = $(form);
+    $('.'+rootId).after(formDiv);
+};

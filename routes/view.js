@@ -11,18 +11,15 @@ router.get('/', function(req, res, next) {
         else
             db.bestPosts((bestPosts)=>{
                 if (bestPosts){
-                    db.getReply(id,(replyList)=>{
-                        res.render('view', {id: id,
-                            title: response.TITLE,
-                            author: response.AUTHOR,
-                            type: response.TYPE,
-                            content: response.CONTENT,
-                            views: response.VIEWS,
-                            isLogined: response.isLogined,
-                            thumbup: response.THUMBUP,
-                            bestPosts: bestPosts,
-                            replyList: replyList});
-                    });
+                    res.render('view', {id: id,
+                        title: response.TITLE,
+                        author: response.AUTHOR,
+                        type: response.TYPE,
+                        content: response.CONTENT,
+                        views: response.VIEWS,
+                        isLogined: response.isLogined,
+                        thumbup: response.THUMBUP,
+                        bestPosts: bestPosts});
                 } else{
                     res.render('error');
                 }
@@ -60,6 +57,12 @@ router.post('/deleteReply',function(req,res,next){
 router.post('/refreshReply',function(req,res,next){
     db.getReply(req.body.id,(replyList)=>{
         res.send({replyList: replyList});
+    });
+});
+
+router.post('/writeReply',function(req,res,next){
+    db.writeReply(req.body,(code)=>{
+        res.send({code: code})
     });
 });
 
