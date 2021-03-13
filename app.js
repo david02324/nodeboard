@@ -3,12 +3,14 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var session = require('express-session');
 
 var listRouter = require('./routes/list');
 var viewRouter = require('./routes/view');
 var writeRouter = require('./routes/write');
 var modifyRouter = require('./routes/modify');
 var searchRouter = require('./routes/search');
+var loginRouter = require('./routes/login');
 var app = express();
 
 // view engine setup
@@ -20,6 +22,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+// 세션
+app.use(session({
+  secret: 'SECRET CODE',
+  resave: false,
+  saveUninitialized: true
+}))
+  
+app.use(function (req, res, next) {
+  
+  next()
+})
+
 // 제이쿼리
 app.use('/jq',express.static(__dirname+'/node_modules/jquery/dist'));
 // 부트스트랩
@@ -31,6 +45,7 @@ app.use('/view',viewRouter);
 app.use('/write',writeRouter);
 app.use('/update',modifyRouter);
 app.use('/search',searchRouter);
+app.use('/login',loginRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

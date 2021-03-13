@@ -63,6 +63,8 @@ p{
   left: -300px;
   position: fixed;
   z-index: 1;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 #notice,#best-posts{
   border: solid 1px grey;
@@ -282,4 +284,11 @@ hr{
   flex-direction: column;
   width: 150px;
   margin-right: 5px;
+}
+#login-form{
+  margin-top: 50px;
+}
+#login-form button{
+  margin-top: 5px;
+  float:right;
 }

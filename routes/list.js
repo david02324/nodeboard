@@ -24,7 +24,7 @@ router.get('/list', function(req,res,next){
     db.bestPosts((bestPosts)=>{
       if (bestPosts)
         res.render('list',{postData : response,values : values,maxPage : maxPage,bestPosts: bestPosts});
-    });
+      });
   });
 });
 

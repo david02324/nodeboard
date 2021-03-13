@@ -88,7 +88,8 @@ function refreshReply(postId){
             for (let reply of replyList){
                 if (reply.ROOT_REPLY_ID == null){
                     var body = `
-                    <div id="reply" class="${reply.ID}">
+                    <div class="${reply.ID}">
+                    <div id="reply">
                     <div id="reply-bar">
                     ${reply.AUTHOR}
                     <a onclick="deleteReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>
@@ -97,9 +98,10 @@ function refreshReply(postId){
                     <hr>
                     <div id="reply-body">${reply.CONTENT}</div>
                     </div>
+                    </div>
                     `;
-                    var replyDiv = $(body);
-                    $('#reply-area').append(replyDiv);
+                    var rootReplyDiv = $(body);
+                    $('#reply-area').append(rootReplyDiv);
                 } else{
                     var body = `
                     <div id="reply">
@@ -113,7 +115,7 @@ function refreshReply(postId){
                     `;
                     var replyDiv = $(body);
                     replyDiv.css('margin-left','20px');
-                    $('.'+reply.ROOT_REPLY_ID).after(replyDiv);
+                    $('.'+reply.ROOT_REPLY_ID).append(replyDiv);
                 }
             }
         }
