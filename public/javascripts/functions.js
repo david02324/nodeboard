@@ -235,3 +235,38 @@ function writeChildReply(rootId,postId){
     var formDiv = $(form);
     $('.'+rootId).after(formDiv);
 };
+
+function register(){
+    var nickname = $('#nickname').val();
+    var pattern_kor = /[ㄱ-ㅎ|ㅏ-ㅣ]/; // 자모음체크
+    var pattern_spc = /[~!@#$%^&*()_+|<>?:{}]/; // 특수기호
+    var pattern_w = /\s/; // 공백
+    if( (pattern_w.test(nickname)) || (pattern_kor.test(nickname)) || (pattern_spc.test(nickname))){
+        alert('특수기호, 공백, 한글 자모음은 입력할 수 없습니다!');
+        return;
+    }
+    if (nickname.length < 2 || nickname.length > 10){
+        alert('2자 이상 10자 이하로 입력해주세요!');
+        return;
+    }
+    $.ajax({
+        url: '/login/registerConfirm',
+        datatype: 'json',
+        type: 'POST',
+        data:{
+            nickname: nickname
+        },
+        success: function(result){
+            result = result.result;
+            if(result == -1){
+                alert('완료되었습니다! 다시 로그인해주세요.');
+                location.href='/';
+            } else if (result == 1){
+                alert('이미 존재하는 닉네임입니다.');
+                $('#nickname').val('');
+            } else if (result == 0){
+                alert('알 수 없는 오류가 발생했습니다. 나중에 다시 시도하세요.');
+            }
+        }
+    })
+}

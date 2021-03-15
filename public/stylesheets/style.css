@@ -292,3 +292,15 @@ hr{
   margin-top: 5px;
   float:right;
 }
+#register{
+  padding-top:100px;
+  text-align: center;
+  font-size:70px;
+}
+#register-form{
+  font-size: 30px;
+  width: 500px;
+  margin: 0 auto;
+  border: 1px solid grey;
+  padding: 50px;
+}

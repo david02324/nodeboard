@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>node로 만드는 게시판</title>
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/stylesheets/style.css">
+        <link rel="stylesheet" href="/stylesheets/menu-button.css">
+    </head>
+    <body>
+        <%-include('sidebar')%>
+        <%-include('navi-bar')%>
+        <div id="register">
+            닉네임 등록하기
+            <div id="register-form">
+                <div class="form-group">
+                    <label for="nickname-label">닉네임</label>
+                    <input type="email" class="form-control" id="nickname" placeholder="2~10자 이내 한글,영어,숫자(변경불가)">
+                </div>
+                <button type="button" onclick="register()" class="btn btn-primary">완료</button>
+            </div>
+        </div>
+    </body>
+    <script src="/jq/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/javascripts/effect.js"></script>
+    <script src="/javascripts/functions.js"></script>
+</html>

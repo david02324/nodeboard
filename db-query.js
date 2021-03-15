@@ -283,6 +283,35 @@ var writeReply = function(data,callback){
     });
 };
 
+var findUser = function(id,callback){
+    db.query('SELECT * FROM USER WHERE USER_CODE=?',[id],(err,result)=>{
+        if(err){
+            callback(1);
+            console.log(err);
+            return;
+        } else{
+            if (result.length == 1){
+                callback(result[0])
+            } else if (result.length == 0){
+                callback(0);
+            }
+        }
+    });
+}
+
+var newUser = function(id,nickname,callback){
+    db.query('INSERT INTO USER (`USER_CODE`, `NICKNAME`, `GROUP`) VALUES (?,?,?)',[id,nickname,'USER'],(err)=>{
+        if(err){
+            if (err.errno == 1062)
+                callback(1);
+            else
+                callback(0);
+        } else{
+            callback(-1);
+        }
+    })
+}
+
 exports.getList = getList;
 exports.viewPost = viewPost;
 exports.writePost = writePost;
@@ -296,3 +325,5 @@ exports.bestPosts = bestPosts;
 exports.getReply = getReply;
 exports.deleteReply = deleteReply;
 exports.writeReply = writeReply;
+exports.findUser = findUser;
+exports.newUser = newUser;
