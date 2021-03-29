@@ -285,8 +285,9 @@ hr{
   width: 150px;
   margin-right: 5px;
 }
-#login-form{
+#login-form, #user-info{
   margin-top: 50px;
+  text-align: center;
 }
 #login-form button{
   margin-top: 5px;

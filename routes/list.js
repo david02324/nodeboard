@@ -22,8 +22,14 @@ router.get('/list', function(req,res,next){
 
   db.getList(20,type,page,(response,maxPage)=>{
     db.bestPosts((bestPosts)=>{
-      if (bestPosts)
-        res.render('list',{postData : response,values : values,maxPage : maxPage,bestPosts: bestPosts});
+      if (bestPosts){
+        data = {postData : response,values : values,maxPage : maxPage,bestPosts: bestPosts};
+        if (req.session.passport)
+          data.user = req.session.passport.user;
+        else
+          data.user = false;
+        res.render('list',data);
+      }
       });
   });
 });

@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../db-query');
-var useCrypto = require('../crypto');
 
 router.get('/', function(req, res, next) {
     let {id} = req.query;
@@ -11,7 +10,7 @@ router.get('/', function(req, res, next) {
         else
             db.bestPosts((bestPosts)=>{
                 if (bestPosts){
-                    res.render('view', {id: id,
+                    data = {id: id,
                         title: response.TITLE,
                         author: response.AUTHOR,
                         type: response.TYPE,
@@ -19,7 +18,13 @@ router.get('/', function(req, res, next) {
                         views: response.VIEWS,
                         isLogined: response.isLogined,
                         thumbup: response.THUMBUP,
-                        bestPosts: bestPosts});
+                        bestPosts: bestPosts};
+
+                    if (req.session.passport)
+                        data.user = req.session.passport.user;
+                    else
+                        data.user = false;
+                    res.render('view', data);
                 } else{
                     res.render('error');
                 }
@@ -28,16 +33,17 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/delete',function(req,res,next){
-    db.checkPassword(req.body.id,req.body.password,(response)=>{
-        if(response){
-            db.deletePost(req.body.id,(callback)=>{
-                if (callback)
-                    res.send("<script>alert('삭제가 완료되었습니다.');window.location.href='/list';</script>");
-                else
-                    res.render('error');
+    db.checkPassword(req.body.id,req.body.plainPassword,(result)=>{
+        if (result){
+            db.deletePost(req.body.id, (response)=>{
+                if (response){
+                    res.send({code: -1});
+                } else{
+                    res.send({code: 1});
+                }
             });
         } else{
-            res.send("<script>alert('비밀번호가 일치하지 않습니다');window.location.href='/view?id="+req.body.id+"';</script>");
+            res.send({code: 0});
         }
     });
 });

@@ -28,11 +28,6 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }))
-  
-app.use(function (req, res, next) {
-  
-  next()
-})
 
 // 제이쿼리
 app.use('/jq',express.static(__dirname+'/node_modules/jquery/dist'));

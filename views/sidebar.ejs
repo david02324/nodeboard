@@ -1,7 +1,14 @@
 <aside id="sidebar">
+    <% if(!user) { %>
     <div id="login-form">
         <a href="/login/google">구글로 로그인</a>
     </div>
+    <% } else { %>
+    <div id="user-info">
+        <%=user.nickname%>님 안녕하세요!
+        <a type="button" class="btn btn-primary" href="/login/logout">로그아웃</a>
+    </div>
+    <% } %>
     <div id="board-list">
         <ul class="list-group">
             <a href="/list"><li class="list-group-item active">전체글 보기</li></a>

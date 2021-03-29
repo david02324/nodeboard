@@ -2,14 +2,6 @@ function writePost(){
     var form = document.createElement("form");
     form.setAttribute("method", 'post');
     form.setAttribute("action", '/write');
-
-    // var hiddenField = document.createElement("input");
-    // hiddenField.setAttribute("type", "hidden");
-    // hiddenField.setAttribute("name", 'userCode');
-    // var code = '(대충 유저 코드)';
-    // hiddenField.setAttribute("value", code);
-    // form.appendChild(hiddenField);
-
     document.body.appendChild(form);
     form.submit();
 };
@@ -21,17 +13,56 @@ function writeCancel(){
     }
 };
 
-function removePost(){
+function removePost(id){
+    var plainPassword = $('#delete-password').val();
+    $.ajax({
+        url: '/view/delete',
+        datatype: 'json',
+        type: 'POST',
+        data: {
+            id : id,
+            plainPassword : plainPassword
+        },
+        success: function(result){
+            if (result.code == -1){
+                alert('삭제가 완료되었습니다.');
+                location.href="/list";
+            } else{
+                if (result.code == 0)
+                    alert('비밀번호가 일치하지 않습니다.');
+                else
+                    alert('에러가 발생했습니다. ERRORCODE : '+result.code);
+            }
+        }
+    });
+};
+
+function updatePost(id){
+    var plainPassword = $('#delete-password').val();
+    var userId = $('#user-id').val();
     var form = document.createElement("form");
     form.setAttribute("method", 'post');
-    form.setAttribute("action", '/view?id='+id+'/delete');
+    form.setAttribute("action", '/update');
 
     var hiddenField = document.createElement('input');
     hiddenField.setAttribute("type", "hidden");
-    hiddenField.setAttribute("name", 'plainPassword');
-    var plainPassword = document.getElementById('delete-password').value;
-    hiddenField.setAttribute("value",plainPassword);
+    hiddenField.setAttribute("name", 'id');
+    hiddenField.setAttribute("value",id);
     form.appendChild(hiddenField);
+
+    if (userId != undefined){
+        hiddenField = document.createElement('input');
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", 'userId');
+        hiddenField.setAttribute("value",userId);
+        form.appendChild(hiddenField);
+    } else {
+        hiddenField = document.createElement('input');
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", 'password');
+        hiddenField.setAttribute("value",plainPassword);
+        form.appendChild(hiddenField);
+    }
 
     document.body.appendChild(form);
     form.submit();
@@ -260,7 +291,7 @@ function register(){
             result = result.result;
             if(result == -1){
                 alert('완료되었습니다! 다시 로그인해주세요.');
-                location.href='/';
+                location.href='/login/logout';
             } else if (result == 1){
                 alert('이미 존재하는 닉네임입니다.');
                 $('#nickname').val('');

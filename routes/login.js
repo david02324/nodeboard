@@ -76,4 +76,9 @@ router.post('/registerConfirm',function(req,res,next){
     });
 });
 
+router.get('/logout', function(req, res){
+    req.logout();
+    res.redirect('/');
+});
+
 module.exports = router;

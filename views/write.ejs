@@ -21,8 +21,12 @@
                         <textarea id="write-content" name="content" placeholder="내용" required minlength="10" maxlength="60000"></textarea>
                     </div>
                     <div id="write-bar">
-                        <input type="text" id="write-author" name="author" placeholder="작성자" required minlength="2" maxlength="10">
-                        <input type="password" id="write-password" name="password" placeholder="비밀번호" required minlength="4" maxlength="20">
+                        <% if (user==false) { %>
+                            <input type="text" id="write-author" name="author" placeholder="작성자" required minlength="2" maxlength="10">
+                            <input type="password" id="write-password" name="password" placeholder="비밀번호" required minlength="4" maxlength="20">
+                        <% } else { %>
+                            <input type="text" id="write-author" name="author" value="<%=user.nickname%>" required minlength="2" maxlength="10" disabled>
+                        <% } %>
                         <button type="submit" class="btn btn-primary" id="write-submit-btn">글쓰기</button>
                         <button type="button" class="btn btn-danger" id="write-cancel-btn" onclick="writeCancel()">취소</button>
                         <select class="form-control" id="type-dropdown" name="type">

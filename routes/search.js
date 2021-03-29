@@ -19,8 +19,14 @@ router.get('/',function(req,res,next){
             res.render('error');
         else
             db.bestPosts((bestPosts)=>{
-                if (bestPosts)
-                    res.render('list',{postData: response,values: data,maxPage: maxPage,bestPosts: bestPosts});
+                if (bestPosts){
+                    data = {postData: response,values: data,maxPage: maxPage,bestPosts: bestPosts};
+                    if (req.session.passport)
+                        data.user = req.session.passport.user;
+                    else
+                        data.user = false;
+                    res.render('list',data);
+                }
                 else
                     res.render('error');
             });

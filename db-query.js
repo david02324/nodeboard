@@ -55,8 +55,8 @@ var viewPost = function(id,callback){
 
 var writePost = function(data,callback){
     // 쿼리에 insert
-    db.query('INSERT INTO POST (`TITLE`, `AUTHOR`, `TYPE`, `CONTENT`, `PASSWORD`) VALUES (?, ?, ?, ?, ?)',
-        [data.title,data.author,data.type,data.content,data.password],function(err){
+    db.query('INSERT INTO POST (`TITLE`, `AUTHOR`, `TYPE`, `CONTENT`, `PASSWORD` , `isLogined`) VALUES (?, ?, ?, ?, ?, ?)',
+        [data.title,data.author,data.type,data.content,data.password,data.isLogined],function(err){
             if (err){
                 console.log(err);
                 callback(false);
@@ -107,23 +107,27 @@ var searchPost = function(data,amount,callback){
         data.mode='TITLE';
     else if (data.mode=='작성자')
         data.mode='AUTHOR';
-    else if (data.authormode=='내용')
+    else if (data.mode=='내용')
         data.mode='CONTENT';
 
 
     if(data.type=='all'){
         db.query('SELECT COUNT(*) AS COUNT FROM POST WHERE ?? LIKE ?',[data.mode,"%"+data.keyword+"%"],(err,count)=>{
-            if (err)
+            if (err){
+                console.log(err);
                 callback(false);
+            }
             else{
                 count = count[0].COUNT;
                 var maxPage = Math.ceil(count / amount);
 
                 db.query('SELECT * FROM POST WHERE ?? LIKE ? ORDER BY ID DESC LIMIT ?, ?',[data.mode,"%"+data.keyword+"%",(data.page-1)*amount,amount],(err,result)=>{
-                    if(err)
+                    if(err){
                         callback(false);
-                    else
+                    }
+                    else{
                         callback(result,maxPage);
+                    }
                 });
             }
         });

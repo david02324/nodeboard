@@ -32,25 +32,29 @@
                             <a onclick="thumbup(<%=id%>)" onmouseover="this.style.cursor='pointer'"><img src="/images/thumbup.svg" alt="추천하기"></a>
                         </div>
                         <% if(isLogined==0) { %>
-                        <hr>
-                        <div id="modify-or-update">
-                            <form accept-charset="utf-8" name="delete-or-modify-data" method="post" onsubmit="return false">
-                                <input type="hidden" name="id" value="<%=id%>">
+                            <hr>
+                            <div id="modify-or-update">
                                 <button type="button" class="btn btn-danger" id="delete-btn" name="delete" onclick="
                                 javascript:
                                     if(confirm('정말로 삭제하시겠습니까?')){
-                                        form.action='/view/delete';
-                                        form.submit();
+                                        removePost(<%=id%>);
                                     }
                                 ">삭제</button>
-                                <button type="button" class="btn btn-primary" id="modify-btn" name="modify" onclick="
+                                <button type="button" class="btn btn-primary" id="modify-btn" name="modify" onclick="updatePost(<%=id%>)">수정</button>
+                                <input type="password" id="delete-password" placeholder="비밀번호" required minlength="4" maxlength="20">
+                            </div>
+                        <% } else if (user && user.nickname == author) { %>
+                            <hr>
+                            <div id="modify-or-update">
+                                <input type="hidden" id="user-id" value="<%=user.id%>">
+                                <button type="button" class="btn btn-danger" id="delete-btn" name="delete" onclick="
                                 javascript:
-                                    form.action='/update';
-                                    form.submit();
-                                ">수정</button>
-                                <input type="password" id="delete-password" name="password" placeholder="비밀번호" required minlength="4" maxlength="20">
-                            </form>
-                        </div>
+                                    if(confirm('정말로 삭제하시겠습니까?')){
+                                        removePost(<%=id%>);
+                                    }
+                                ">삭제</button>
+                                <button type="button" class="btn btn-primary" id="modify-btn" name="modify" onclick="updatePost(<%=id%>)">수정</button>
+                            </div>
                         <% } %>
                     </div>
                     <div id="reply-upper">
