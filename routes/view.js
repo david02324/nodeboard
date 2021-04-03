@@ -8,8 +8,8 @@ router.get('/', function(req, res, next) {
         if (response===false)
             res.render('error');
         else
-            db.bestPosts((bestPosts)=>{
-                if (bestPosts){
+            db.innerRight((bestPosts,announcements)=>{
+                if (bestPosts && announcements){
                     data = {id: id,
                         title: response.TITLE,
                         author: response.AUTHOR,
@@ -18,7 +18,8 @@ router.get('/', function(req, res, next) {
                         views: response.VIEWS,
                         isLogined: response.isLogined,
                         thumbup: response.THUMBUP,
-                        bestPosts: bestPosts};
+                        bestPosts: bestPosts,
+                        announcements: announcements};
 
                     if (req.session.passport)
                         data.user = req.session.passport.user;

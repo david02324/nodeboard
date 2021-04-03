@@ -1,17 +1,13 @@
 <div id="inner-right">
     <div id="notice">
-        <span>(공지사항)</span>
+        <span>공지사항</span>
         <table class="table">
             <tbody>
-            <tr>
-                <td>샘플 공지사항 1</td>
-            </tr>
-            <tr>
-                <td>샘플 공지사항 2</td>
-            </tr>
-            <tr>
-                <td>샘플 공지사항 3</td>
-            </tr>
+                <% for (let announcement of announcements) { %>
+                    <tr onmouseover="this.style.backgroundColor='#CCCCCC'; this.style.cursor='pointer'" onmouseout="this.style.backgroundColor='#FFFFFF'" onclick="location.href='/view?id=<%=announcement.ID%>'">
+                        <td><%=announcement.TITLE%></td>
+                    </tr>
+                <% } %>
             </tbody> 
         </table>
     </div>

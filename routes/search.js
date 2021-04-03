@@ -18,9 +18,9 @@ router.get('/',function(req,res,next){
         if (response===false)
             res.render('error');
         else
-            db.bestPosts((bestPosts)=>{
-                if (bestPosts){
-                    data = {postData: response,values: data,maxPage: maxPage,bestPosts: bestPosts};
+            db.innerRight((bestPosts,announcements)=>{
+                if (bestPosts && announcements){
+                    data = {postData: response,values: data,maxPage: maxPage,bestPosts: bestPosts, announcements: announcements};
                     if (req.session.passport)
                         data.user = req.session.passport.user;
                     else

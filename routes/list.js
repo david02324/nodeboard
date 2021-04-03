@@ -21,9 +21,9 @@ router.get('/list', function(req,res,next){
   values.isSearch = false;
 
   db.getList(20,type,page,(response,maxPage)=>{
-    db.bestPosts((bestPosts)=>{
-      if (bestPosts){
-        data = {postData : response,values : values,maxPage : maxPage,bestPosts: bestPosts};
+    db.innerRight((bestPosts,announcements)=>{
+      if (bestPosts && announcements){
+        data = {postData : response,values : values,maxPage : maxPage,bestPosts: bestPosts, announcements: announcements};
         if (req.session.passport)
           data.user = req.session.passport.user;
         else

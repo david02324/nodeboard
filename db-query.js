@@ -214,12 +214,22 @@ var thumbup = function(id,ip,callback){
     });
 }
 
-var bestPosts = function(callback){
-    db.query('SELECT ID, TITLE FROM POST ORDER BY THUMBUP DESC LIMIT 3',(err,result)=>{
-        if (err)
-            callback(false);
-        else
-            callback(result);
+var innerRight = function(callback){
+    db.query('SELECT ID, TITLE FROM POST ORDER BY THUMBUP DESC LIMIT 3',(err,bestPosts)=>{
+        if (err){
+            callback(false,false);
+            console.log('1')
+        }
+        else{
+            db.query('SELECT ID, TITLE FROM POST WHERE TYPE=\'공지사항\' ORDER BY ID DESC LIMIT 3', (err,announcements)=>{
+                if (err){
+                    callback(false,false);
+                    console.log(err)
+                }
+                else
+                    callback(bestPosts,announcements);
+            });
+        }
     });
 };
 
@@ -325,7 +335,7 @@ exports.viewForUpdatePost = viewForUpdatePost;
 exports.updatePost = updatePost;
 exports.searchPost = searchPost;
 exports.thumbup = thumbup;
-exports.bestPosts = bestPosts;
+exports.innerRight = innerRight;
 exports.getReply = getReply;
 exports.deleteReply = deleteReply;
 exports.writeReply = writeReply;
