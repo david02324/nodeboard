@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var db = require('../db-query');
+var useCrypto = require('../crypto.js');
 
 router.post('/',function(req,res,next){
     if (req.body.userId == undefined){
@@ -24,16 +25,18 @@ router.post('/',function(req,res,next){
         });
     } else if (req.body.userId == req.session.passport.user.id){
         db.viewForUpdatePost(req.body.id,(post)=>{
-            data = {id: post.ID, code: req.session.passport.user.id ,title: post.TITLE,type: post.TYPE, content: post.CONTENT, author: post.AUTHOR};
-            if (req.session.passport && req.session.passport.user)
-                data.user = req.session.passport.user;
-            else
-                data.user = false;
+            useCrypto(req.session.passport.user.id,(code)=>{
+                data = {id: post.ID, code: code ,title: post.TITLE,type: post.TYPE, content: post.CONTENT, author: post.AUTHOR};
+                if (req.session.passport && req.session.passport.user)
+                    data.user = req.session.passport.user;
+                else
+                    data.user = false;
 
-            if (post != null)
-                res.render('update',data);
-            else
-                res.render('error');
+                if (post != null)
+                    res.render('update',data);
+                else
+                    res.render('error');
+            });
         });
     } else{
         res.render('error');

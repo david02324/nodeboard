@@ -15,6 +15,9 @@ function writeCancel(){
 
 function removePost(id){
     var plainPassword = $('#delete-password').val();
+    if(!plainPassword){
+        plainPassword = $('#user-id').val();
+    }
     $.ajax({
         url: '/view/delete',
         datatype: 'json',
