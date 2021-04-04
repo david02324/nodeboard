@@ -116,14 +116,20 @@ function refreshReply(postId){
         success: function(result){
             $('#reply-area').empty();
             replyList = result.replyList;
+            nickname = result.nickname;
             for (let reply of replyList){
                 if (reply.ROOT_REPLY_ID == null){
                     var body = `
                     <div class="${reply.ID}">
                     <div id="reply">
                     <div id="reply-bar">
-                    ${reply.AUTHOR}
-                    <a onclick="deleteReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>
+                    ${reply.AUTHOR}`
+                    if (reply.isLogined == 0){
+                        body += `<a onclick="deleteReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>`
+                    } else if (nickname == reply.AUTHOR) {
+                        body += `<a onclick="deleteMyReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>`
+                    }
+                    body += `
                     <a onclick="writeChildReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">[답글]</a>
                     </div>
                     <hr>
@@ -137,8 +143,13 @@ function refreshReply(postId){
                     var body = `
                     <div id="reply">
                     <div id="reply-bar">
-                    ${reply.AUTHOR}
-                    <a onclick="deleteReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>
+                    ${reply.AUTHOR}`
+                    if (reply.isLogined == 0){
+                        body += `<a onclick="deleteReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>`
+                    } else if (nickname == reply.AUTHOR){
+                        body += `<a onclick="deleteMyReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>`
+                    }
+                    body += `
                     </div>
                     <hr>
                     <div id="reply-body">${reply.CONTENT}</div>
@@ -163,19 +174,40 @@ function showReply(postId){
 
     refreshReply(postId);
 
-    body = `
-    <div id="reply-write-form">
-        <div id="reply-info">
-            <input type="text" id="reply-writer" placeholder="작성자" value="익명">
-            <hr>
-            <input type="password" id="reply-password" placeholder="비밀번호" placeholder="제목">
-        </div>
-        <textarea id="reply-content" placeholder="내용"></textarea>
-        <button type="button" class="btn btn-dark" onclick="writeReply(${postId},null)">작성</button>
-        </div>
-    `
-
-    $('#view-left').append($(body));
+    $.ajax({
+        url: '/view/loginCheck',
+        datatype: 'json',
+        type: 'POST',
+        data :{},
+        success: function(result) {
+            if (result.logined) {
+                form = `
+                <div id="reply-write-form">
+                    <div id="reply-info">
+                        <input type="text" id="reply-writer" placeholder="작성자" value=${result.nickname} readonly>
+                        <hr>
+                        <input disabled>
+                    </div>
+                    <textarea id="reply-content" placeholder="내용"></textarea>
+                    <button type="button" class="btn btn-dark" onclick="writeReply(${postId},null,1)">작성</button>
+                </div>
+                `
+            } else {
+                form = `
+                <div id="reply-write-form">
+                    <div id="reply-info">
+                        <input type="text" id="reply-writer" placeholder="작성자" value="익명">
+                        <hr>
+                        <input type="password" id="reply-password" placeholder="비밀번호">
+                    </div>
+                    <textarea id="reply-content" placeholder="내용"></textarea>
+                    <button type="button" class="btn btn-dark" onclick="writeReply(${postId},null,0)">작성</button>
+                </div>
+                `
+            }
+        $('#view-left').append($(form));
+        }
+    })
 };
 
 function deleteReply(id,postId){
@@ -189,6 +221,7 @@ function deleteReply(id,postId){
         data: {
             id : id,
             plainPassword : plainPassword,
+            isLogined: false
         },
         success: function(result){
             if (result.code == -1){
@@ -203,14 +236,37 @@ function deleteReply(id,postId){
     });
 };
 
-function writeReply(postId,rootReplyId){
+function deleteMyReply(id,postId){
+    if(confirm('댓글을 삭제하시겠습니까?')){
+        $.ajax({
+            url: '/view/deleteReply',
+            datatype: 'json',
+            type: 'POST',
+            data: {
+                id: id,
+                isLogined: true
+            },
+            success: function(result){
+                if (result.code == -1){
+                    refreshReply(postId);
+                } else{
+                    if (result.code == 0)
+                        alert('비밀번호가 일치하지 않습니다.');
+                    else
+                        alert('에러가 발생했습니다. ERRORCODE : '+result.code);
+                }
+            }
+        });
+    }
+};
+
+function writeReply(postId,rootReplyId,isLogined){
     if (rootReplyId === null)
         $('#child-write-form').remove();
 
     var writer = $('#reply-writer').val();
     var password = $('#reply-password').val();
     var content = $('#reply-content').val();
-    var isLogined = 0;
 
     if (writer.length < 2){
         alert('작성자를 2자 이상 입력해주세요');
@@ -218,10 +274,10 @@ function writeReply(postId,rootReplyId){
     } else if(writer.length > 10){
         alert('작성자는 최대 10자를 넘을 수 없습니다');
         return;
-    } else if (password.length < 4){
+    } else if (isLogined == 0 && password.length < 4){
         alert('비밀번호를 4자 이상 입력해주세요');
         return;
-    } else if (password.length > 20){
+    } else if (isLogined == 0 && password.length > 20){
         alert('비밀번호는 최대 20자를 넘을 수 없습니다');
         return;
     } else if (content.length < 2){
@@ -232,6 +288,9 @@ function writeReply(postId,rootReplyId){
         return;
     }
 
+    if (isLogined == 1){
+        password = '';
+    }
     var data = {writer,password,rootReplyId,isLogined,content,postId};
     
     $.ajax({
@@ -252,19 +311,40 @@ function writeReply(postId,rootReplyId){
 
 function writeChildReply(rootId,postId){
     $('#child-write-form').remove();
-    var form = `
-    <div id="child-write-form">
-    <div id="reply-info">
-        <input type="text" id="reply-writer" placeholder="작성자" value="익명">
-        <hr>
-        <input type="password" id="reply-password" placeholder="비밀번호" placeholder="제목">
-    </div>
-    <textarea id="reply-content" placeholder="내용"></textarea>
-    <button type="button" class="btn btn-dark" onclick="writeReply(${postId},${rootId})">작성</button>
-    </div>
-    `
-    var formDiv = $(form);
-    $('.'+rootId).after(formDiv);
+    $.ajax({
+        url: '/view/loginCheck',
+        datatype: 'json',
+        type: 'POST',
+        data :{},
+        success: function(result) {
+            if (result.logined) {
+                form = `
+                <div id="child-write-form">
+                    <div id="reply-info">
+                        <input type="text" id="reply-writer" placeholder="작성자" value=${result.nickname} readonly>
+                        <hr>
+                        <input disabled>
+                    </div>
+                    <textarea id="reply-content" placeholder="내용"></textarea>
+                    <button type="button" class="btn btn-dark" onclick="writeReply(${postId},${rootId},1)">작성</button>
+                </div>
+                `
+            } else {
+                form = `
+                <div id="child-write-form">
+                    <div id="reply-info">
+                        <input type="text" id="reply-writer" placeholder="작성자" value="익명">
+                        <hr>
+                        <input type="password" id="reply-password" placeholder="비밀번호">
+                    </div>
+                    <textarea id="reply-content" placeholder="내용"></textarea>
+                    <button type="button" class="btn btn-dark" onclick="writeReply(${postId},${rootId},0)">작성</button>
+                </div>
+                `
+            }
+            $('.'+rootId).after($(form));
+        }
+    })
 };
 
 function register(){

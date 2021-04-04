@@ -24,7 +24,7 @@ router.get('/list', function(req,res,next){
     db.innerRight((bestPosts,announcements)=>{
       if (bestPosts && announcements){
         data = {postData : response,values : values,maxPage : maxPage,bestPosts: bestPosts, announcements: announcements};
-        if (req.session.passport)
+        if (req.session.passport && req.session.passport.user)
           data.user = req.session.passport.user;
         else
           data.user = false;

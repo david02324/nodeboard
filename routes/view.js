@@ -21,7 +21,7 @@ router.get('/', function(req, res, next) {
                         bestPosts: bestPosts,
                         announcements: announcements};
 
-                    if (req.session.passport)
+                    if (req.session.passport && req.session.passport.user)
                         data.user = req.session.passport.user;
                     else
                         data.user = false;
@@ -56,21 +56,44 @@ router.post('/thumbup',function(req,res,next){
 });
 
 router.post('/deleteReply',function(req,res,next){
-    db.deleteReply(req.body.id,req.body.plainPassword,(code)=>{
-        res.send({code: code});
-    });
+    if (req.body.isLogined){
+        password = ''
+        db.deleteReply(req.body.id,password,(code)=>{
+            res.send({code:code});
+        });
+    }else {
+        db.deleteReply(req.body.id,req.body.plainPassword,(code)=>{
+            res.send({code: code});
+        });
+    }
 });
 
 router.post('/refreshReply',function(req,res,next){
     db.getReply(req.body.id,(replyList)=>{
-        res.send({replyList: replyList});
+        data = {replyList: replyList};
+        if (req.session.passport && req.session.passport.user){
+            data.nickname = req.session.passport.user.nickname;
+        }
+        res.send(data);
     });
 });
 
 router.post('/writeReply',function(req,res,next){
-    db.writeReply(req.body,(code)=>{
-        res.send({code: code})
-    });
+    if (req.body.isLogined == 1 && req.body.writer != req.session.passport.user.nickname){
+        res.send({code: -100});
+    } else {
+        db.writeReply(req.body,(code)=>{
+            res.send({code: code})
+        });
+    }
+});
+
+router.post('/loginCheck',function(req,res,next){
+    if(req.session.passport && req.session.passport.user){
+        res.send({logined: true,nickname: req.session.passport.user.nickname});
+    } else {
+        res.send({logined: false});
+    }
 });
 
 module.exports = router;

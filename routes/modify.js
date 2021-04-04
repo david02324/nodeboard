@@ -8,7 +8,7 @@ router.post('/',function(req,res,next){
             if(response){
                 db.viewForUpdatePost(req.body.id,(post)=>{
                     data = {id: post.ID, code: post.PASSWORD ,title: post.TITLE,type: post.TYPE, content: post.CONTENT, author: post.AUTHOR};
-                    if (req.session.passport)
+                    if (req.session.passport && req.session.passport.user)
                         data.user = req.session.passport.user;
                     else
                         data.user = false;
@@ -25,7 +25,7 @@ router.post('/',function(req,res,next){
     } else if (req.body.userId == req.session.passport.user.id){
         db.viewForUpdatePost(req.body.id,(post)=>{
             data = {id: post.ID, code: req.session.passport.user.id ,title: post.TITLE,type: post.TYPE, content: post.CONTENT, author: post.AUTHOR};
-            if (req.session.passport)
+            if (req.session.passport && req.session.passport.user)
                 data.user = req.session.passport.user;
             else
                 data.user = false;
