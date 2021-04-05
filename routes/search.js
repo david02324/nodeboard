@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var db = require('../db-query');
 
+// 글 검색
 router.get('/',function(req,res,next){
     let {type,mode,keyword,page} = req.query;
     if (page===undefined)
@@ -14,10 +15,9 @@ router.get('/',function(req,res,next){
     data.page = page;
     data.isSearch = true;
 
+    // 기본적으로 글 20개 단위로 검색
     db.searchPost(data,20,(response,maxPage)=>{
-        if (response===false)
-            res.render('error');
-        else
+        if (response){
             db.innerRight((bestPosts,announcements)=>{
                 if (bestPosts && announcements){
                     data = {postData: response,values: data,maxPage: maxPage,bestPosts: bestPosts, announcements: announcements};
@@ -28,8 +28,11 @@ router.get('/',function(req,res,next){
                     res.render('list',data);
                 }
                 else
-                    res.render('error');
+                    res.render('error',{code: -106});
             });
+        } else{
+            res.render('error',{code: -107});
+        }
     });
 });
 

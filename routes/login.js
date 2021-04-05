@@ -14,6 +14,7 @@ passport.deserializeUser(function(obj, done) {
     done(null, obj);
 });
 
+// 구글 로그인 API 정보 등록
 var goolgeCred = require('../googleCred.json');
     passport.use(new GoogleStrategy({
         clientID: goolgeCred.web.client_id,
@@ -56,6 +57,7 @@ router.get('/google/callback',
     }
 );
 
+// 가입
 router.get('/register',function(req,res,next){
     if(!req.session.passport.user.newUser){
         res.render('error');
@@ -64,10 +66,11 @@ router.get('/register',function(req,res,next){
     }
 });
 
+// 가입 제출
 router.post('/registerConfirm',function(req,res,next){
     db.findUser(req.session.passport.user.id,(response)=>{
         if (response != 0){
-            res.render('error');
+            res.render('error' ,{code: -100});
         } else{
             db.newUser(req.session.passport.user.id,req.body.nickname,(response)=>{
                 res.send({result:response});
@@ -76,6 +79,7 @@ router.post('/registerConfirm',function(req,res,next){
     });
 });
 
+// 로그아웃
 router.get('/logout', function(req, res){
     req.logout();
     res.redirect('/');

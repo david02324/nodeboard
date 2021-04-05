@@ -1,3 +1,4 @@
+// 글쓰기 버튼 클릭
 function writePost(){
     var form = document.createElement("form");
     form.setAttribute("method", 'post');
@@ -6,6 +7,7 @@ function writePost(){
     form.submit();
 };
 
+// 글쓰기 취소
 function writeCancel(){
     var check = confirm('정말로 글쓰기를 취소하시겠습니까?');
     if (check){
@@ -13,8 +15,12 @@ function writeCancel(){
     }
 };
 
+// 글 삭제
 function removePost(id){
+    // 입력한 패스워드 값 저장
     var plainPassword = $('#delete-password').val();
+
+    // 패스워드 없음->로그인 유저->유저 id를 대신 저장
     if(!plainPassword){
         plainPassword = $('#user-id').val();
     }
@@ -40,26 +46,36 @@ function removePost(id){
     });
 };
 
+// 글 수정
 function updatePost(id){
+    // 사용자가 입력한 비밀번호
     var plainPassword = $('#delete-password').val();
+    // 로그인 사용자의 글일 경우 id값을 저장
     var userId = $('#user-id').val();
+
     var form = document.createElement("form");
     form.setAttribute("method", 'post');
     form.setAttribute("action", '/update');
 
+    // 수정할 글의 id전송
     var hiddenField = document.createElement('input');
     hiddenField.setAttribute("type", "hidden");
     hiddenField.setAttribute("name", 'id');
     hiddenField.setAttribute("value",id);
     form.appendChild(hiddenField);
 
+    // 로그인 유저의 글일 경우
     if (userId != undefined){
+        // 유저 id를 전송
         hiddenField = document.createElement('input');
         hiddenField.setAttribute("type", "hidden");
         hiddenField.setAttribute("name", 'userId');
         hiddenField.setAttribute("value",userId);
         form.appendChild(hiddenField);
+    
+    // 비로그인 유저의 글일 경우
     } else {
+        // 패스워드 전송
         hiddenField = document.createElement('input');
         hiddenField.setAttribute("type", "hidden");
         hiddenField.setAttribute("name", 'password');
@@ -68,38 +84,44 @@ function updatePost(id){
     }
 
     document.body.appendChild(form);
+    // 전송
     form.submit();
 };
 
+// 글 검색
 function searchPost(type){
     location.href="/search?type="+type+"&mode="+$('#search-mode').val()+"&keyword="+$('#search-keyword').val();
 };
 
+// 페이지 이동
 function movePage(target,isSearch,type,mode,keyword,maxPage){
-    console.log(typeof maxPage);
     if (target < 1 || target > maxPage){
         alert('페이지 범위를 벗어났습니다!');
         $('#target-page').val('');
         return;
     }
-
+    
+    // url 생성
     var url = '';
-
     if (isSearch)
         url = '/search?mode='+mode+'&keyword='+keyword+'&';
     else
         url = '/list?';
-    
     url += 'type='+type+'&page='+target;
 
+    // 이동
     location.href = url;
 };
 
+
+// 글 추천
 function thumbup(id){
     $.ajax({
         url: '/view/thumbup',
         datatype: 'json',
         type: 'POST',
+
+        // 글의 id만 전송
         data: {id:id},
         success: function(result){
             if (result.result)
@@ -110,25 +132,33 @@ function thumbup(id){
     })
 };
 
+// 댓글 새로고침
 function refreshReply(postId){
     $.ajax({
         url: '/view/refreshReply',
         datatype: 'json',
         type: 'POST',
+        // 글의 id 전송
         data: {id : postId},
         success: function(result){
             $('#reply-area').empty();
+            // 댓글 리스트가 담긴 배열
             replyList = result.replyList;
+            // 요청을 보낸 client의 nickname
             nickname = result.nickname;
+
             for (let reply of replyList){
+                // 일반 댓글
                 if (reply.ROOT_REPLY_ID == null){
                     var body = `
                     <div class="${reply.ID}">
                     <div id="reply">
                     <div id="reply-bar">
                     ${reply.AUTHOR}`
+                    // 비로그인 사용자의 댓글일 경우
                     if (reply.isLogined == 0){
                         body += `<a onclick="deleteReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>`
+                    // 로그인 사용자의 댓글일 경우
                     } else if (nickname == reply.AUTHOR) {
                         body += `<a onclick="deleteMyReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>`
                     }
@@ -142,6 +172,8 @@ function refreshReply(postId){
                     `;
                     var rootReplyDiv = $(body);
                     $('#reply-area').append(rootReplyDiv);
+                
+                // 답글
                 } else{
                     var body = `
                     <div id="reply">
@@ -160,6 +192,7 @@ function refreshReply(postId){
                     `;
                     var replyDiv = $(body);
                     replyDiv.css('margin-left','20px');
+                    // 답글의 원 댓글의 아래에 append
                     $('.'+reply.ROOT_REPLY_ID).append(replyDiv);
                 }
             }
@@ -167,6 +200,7 @@ function refreshReply(postId){
     });
 };
 
+// 댓글보기 버튼
 function showReply(postId){
     $('#reply-upper').empty();
     var body = `
@@ -177,13 +211,16 @@ function showReply(postId){
 
     refreshReply(postId);
 
+    // 로그인 유저인지 확인
     $.ajax({
         url: '/view/loginCheck',
         datatype: 'json',
         type: 'POST',
         data :{},
         success: function(result) {
+            // 로그인 유저라면
             if (result.logined) {
+                // 작성자 이름을 고정하고, 패스워드란 비활성화
                 form = `
                 <div id="reply-write-form">
                     <div id="reply-info">
@@ -195,6 +232,7 @@ function showReply(postId){
                     <button type="button" class="btn btn-dark" onclick="writeReply(${postId},null,1)">작성</button>
                 </div>
                 `
+            // 비로그인 유저라면
             } else {
                 form = `
                 <div id="reply-write-form">
@@ -213,10 +251,14 @@ function showReply(postId){
     })
 };
 
+// 비로그인 유저가 쓴 댓글 삭제
 function deleteReply(id,postId){
     var plainPassword = prompt('댓글 작성시 입력한 비밀번호를 입력하세요');
+
+    // 공백 입력
     if (plainPassword == '' || plainPassword == undefined)
         return;
+    
     $.ajax({
         url: '/view/deleteReply',
         datatype: 'json',
@@ -228,6 +270,7 @@ function deleteReply(id,postId){
         },
         success: function(result){
             if (result.code == -1){
+                // 댓글 삭제에 성공했다면 댓글 새로고침
                 refreshReply(postId);
             } else{
                 if (result.code == 0)
@@ -239,6 +282,7 @@ function deleteReply(id,postId){
     });
 };
 
+// 로그인 유저의 자신의 댓글 삭제
 function deleteMyReply(id,postId){
     if(confirm('댓글을 삭제하시겠습니까?')){
         $.ajax({
@@ -250,6 +294,7 @@ function deleteMyReply(id,postId){
                 isLogined: true
             },
             success: function(result){
+                // 댓글 삭제에 성공했다면 댓글 새로고침
                 if (result.code == -1){
                     refreshReply(postId);
                 } else{
@@ -263,6 +308,7 @@ function deleteMyReply(id,postId){
     }
 };
 
+// 댓글 작성
 function writeReply(postId,rootReplyId,isLogined){
     if (rootReplyId === null)
         $('#child-write-form').remove();
@@ -271,6 +317,7 @@ function writeReply(postId,rootReplyId,isLogined){
     var password = $('#reply-password').val();
     var content = $('#reply-content').val();
 
+    // 유효성 검사
     if (writer.length < 2){
         alert('작성자를 2자 이상 입력해주세요');
         return;
@@ -291,6 +338,7 @@ function writeReply(postId,rootReplyId,isLogined){
         return;
     }
 
+    // 로그인 유저라면 패스워드 공백으로 설정
     if (isLogined == 1){
         password = '';
     }
@@ -303,6 +351,7 @@ function writeReply(postId,rootReplyId,isLogined){
         data: data,
         success: function(result){
             if (result.code == -1){
+                // 댓글 작성 성공시 댓글 새로고침
                 refreshReply(postId);
             } else{
                 alert('에러가 발생했습니다. ERRORCODE : '+result.code);
@@ -312,7 +361,9 @@ function writeReply(postId,rootReplyId,isLogined){
     });
 };
 
+// 답글 작성
 function writeChildReply(rootId,postId){
+    // 기존에 있던 답글 작성 form 제거
     $('#child-write-form').remove();
     $.ajax({
         url: '/view/loginCheck',
@@ -320,7 +371,9 @@ function writeChildReply(rootId,postId){
         type: 'POST',
         data :{},
         success: function(result) {
+            // 로그인 유저라면
             if (result.logined) {
+                // 작성자 고정, 비밀번호란 비활성화
                 form = `
                 <div id="child-write-form">
                     <div id="reply-info">
@@ -332,6 +385,7 @@ function writeChildReply(rootId,postId){
                     <button type="button" class="btn btn-dark" onclick="writeReply(${postId},${rootId},1)">작성</button>
                 </div>
                 `
+            // 비로그인 유저라면
             } else {
                 form = `
                 <div id="child-write-form">
@@ -350,6 +404,7 @@ function writeChildReply(rootId,postId){
     })
 };
 
+// 가입(닉네임 생성)
 function register(){
     var nickname = $('#nickname').val();
     var pattern_kor = /[ㄱ-ㅎ|ㅏ-ㅣ]/; // 자모음체크
