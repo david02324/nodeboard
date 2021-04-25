@@ -326,6 +326,22 @@ var newUser = function(id,nickname,callback){
     })
 }
 
+var checkIsLogined = function(postId,callback){
+    db.query('SELECT isLogined FROM POST WHERE ID=?',[postId],(err,result)=>{
+        if(err){
+            callback(-1);
+            console.log(err);
+            return;
+        } else {
+            if(result.length == 1){
+                callback(result[0].isLogined);
+            } else {
+                callback(-2);
+                return;
+            }
+        }
+    });
+}
 exports.getList = getList;
 exports.viewPost = viewPost;
 exports.writePost = writePost;
@@ -341,3 +357,4 @@ exports.deleteReply = deleteReply;
 exports.writeReply = writeReply;
 exports.findUser = findUser;
 exports.newUser = newUser;
+exports.checkIsLogined = checkIsLogined;

@@ -20,10 +20,11 @@ function removePost(id){
     // 입력한 패스워드 값 저장
     var plainPassword = $('#delete-password').val();
 
-    // 패스워드 없음->로그인 유저->유저 id를 대신 저장
-    if(!plainPassword){
-        plainPassword = $('#user-id').val();
+    if(plainPassword == ''){
+        alert('패스워드를 입력하세요');
+        return;
     }
+
     $.ajax({
         url: '/view/delete',
         datatype: 'json',
@@ -33,11 +34,11 @@ function removePost(id){
             plainPassword : plainPassword
         },
         success: function(result){
-            if (result.code == -1){
+            if (result.code == 1){
                 alert('삭제가 완료되었습니다.');
                 location.href="/list";
             } else{
-                if (result.code == 0)
+                if (result.code == -1000)
                     alert('비밀번호가 일치하지 않습니다.');
                 else
                     alert('에러가 발생했습니다. ERRORCODE : '+result.code);
@@ -50,8 +51,6 @@ function removePost(id){
 function updatePost(id){
     // 사용자가 입력한 비밀번호
     var plainPassword = $('#delete-password').val();
-    // 로그인 사용자의 글일 경우 id값을 저장
-    var userId = $('#user-id').val();
 
     var form = document.createElement("form");
     form.setAttribute("method", 'post');
@@ -63,25 +62,13 @@ function updatePost(id){
     hiddenField.setAttribute("name", 'id');
     hiddenField.setAttribute("value",id);
     form.appendChild(hiddenField);
-
-    // 로그인 유저의 글일 경우
-    if (userId != undefined){
-        // 유저 id를 전송
-        hiddenField = document.createElement('input');
-        hiddenField.setAttribute("type", "hidden");
-        hiddenField.setAttribute("name", 'userId');
-        hiddenField.setAttribute("value",userId);
-        form.appendChild(hiddenField);
     
-    // 비로그인 유저의 글일 경우
-    } else {
-        // 패스워드 전송
-        hiddenField = document.createElement('input');
-        hiddenField.setAttribute("type", "hidden");
-        hiddenField.setAttribute("name", 'password');
-        hiddenField.setAttribute("value",plainPassword);
-        form.appendChild(hiddenField);
-    }
+    // 패스워드 전송
+    hiddenField = document.createElement('input');
+    hiddenField.setAttribute("type", "hidden");
+    hiddenField.setAttribute("name", 'password');
+    hiddenField.setAttribute("value",plainPassword);
+    form.appendChild(hiddenField);
 
     document.body.appendChild(form);
     // 전송

@@ -43,20 +43,43 @@ router.get('/', function(req, res, next) {
 
 // 글 삭제
 router.post('/delete',function(req,res,next){
-    // 패스워드 확인
-    db.checkPassword(req.body.id,req.body.plainPassword,(result)=>{
-        if (result){
-            db.deletePost(req.body.id, (response)=>{
-                if (response){
-                    res.send({code: -1});
+    db.checkIsLogined(req.body.id,(result)=>{
+        if (result == 1){
+            if (req.session.passport && req.session.passport.user){ // 로그인 유저가 쓴 글 삭제
+                db.checkPassword(req.body.id,req.session.passport.user.id,(result)=>{
+                    if (result){
+                        db.deletePost(req.body.id, (response)=>{
+                            if (response){
+                                res.send({code: 1});
+                            } else{
+                                res.send({code: -3});
+                            }
+                        });
+                    } else{
+                        res.send({code: -2000});
+                    }
+                });
+            }
+        } else if (result == 0){ // 비로그인 유저가 쓴 글 삭제
+            // 패스워드 확인
+            db.checkPassword(req.body.id,req.body.plainPassword,(result)=>{
+                if (result){
+                    db.deletePost(req.body.id, (response)=>{
+                        if (response){
+                            res.send({code: 1});
+                        } else{
+                            res.send({code: -4});
+                        }
+                    });
                 } else{
-                    res.send({code: 1});
+                    res.send({code: -1000});
                 }
             });
-        } else{
-            res.send({code: 0});
+        } else {
+            res.send({code: result});
         }
     });
+
 });
 
 // 글 추천
