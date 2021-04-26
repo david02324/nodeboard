@@ -253,7 +253,7 @@ function deleteReply(id,postId){
         data: {
             id : id,
             plainPassword : plainPassword,
-            isLogined: false
+            isLogined: 0
         },
         success: function(result){
             if (result.code == -1){
@@ -278,7 +278,7 @@ function deleteMyReply(id,postId){
             type: 'POST',
             data: {
                 id: id,
-                isLogined: true
+                isLogined: 1
             },
             success: function(result){
                 // 댓글 삭제에 성공했다면 댓글 새로고침
@@ -325,10 +325,10 @@ function writeReply(postId,rootReplyId,isLogined){
         return;
     }
 
-    // 로그인 유저라면 패스워드 공백으로 설정
-    if (isLogined == 1){
-        password = '';
-    }
+    // // 로그인 유저라면 패스워드 일단 공백으로 설정
+    // if (isLogined == 1){
+    //     password = '';
+    // }
     var data = {writer,password,rootReplyId,isLogined,content,postId};
     
     $.ajax({

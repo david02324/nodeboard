@@ -93,12 +93,15 @@ router.post('/thumbup',function(req,res,next){
 // 댓글 삭제
 router.post('/deleteReply',function(req,res,next){
     // 로그인 유저의 자신의 댓글 삭제
-    if (req.body.isLogined){
-        // 로그인 유저 댓글 작성시 비밀번호 빈 문자열으로 지정했으므로 동일하게 넘겨준다.
-        password = ''
-        db.deleteReply(req.body.id,password,(code)=>{
-            res.send({code:code});
-        });
+    if (req.body.isLogined == 1){
+        if (req.session.passport && req.session.passport.user){
+            password = req.session.passport.user.id;
+            db.deleteReply(req.body.id,password,(code)=>{
+                res.send({code:code});
+            });
+        } else {
+            res.send({code: -1000});
+        }
     // 비로그인 유저의 댓글 삭제
     }else {
         db.deleteReply(req.body.id,req.body.plainPassword,(code)=>{
@@ -124,14 +127,17 @@ router.post('/refreshReply',function(req,res,next){
 
 // 댓글 작성
 router.post('/writeReply',function(req,res,next){
-    // 로그인 유저가 비정상적으로 댓글 작성 시도
-    if (req.body.isLogined == 1 && req.body.writer != req.session.passport.user.nickname){
-        res.send({code: -100});
-    } else {
-        db.writeReply(req.body,(code)=>{
-            res.send({code: code})
-        });
+    if (req.body.isLogined == 1){
+        if (req.session.passport && req.session.passport.user){
+            req.body.writer = req.session.passport.user.nickname;
+            req.body.password = req.session.passport.user.id;
+        } else {
+            res.send({code: -100});
+        }
     }
+    db.writeReply(req.body,(code)=>{
+        res.send({code: code})
+    });
 });
 
 // 로그인 했는지 체크, 로그인했다면 닉네임 전송
