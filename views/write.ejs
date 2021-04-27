@@ -5,6 +5,7 @@
         <link rel="stylesheet" href="/css/bootstrap.min.css">
         <link rel="stylesheet" href="/stylesheets/style.css">
         <link rel="stylesheet" href="/stylesheets/menu-button.css">
+        <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
     </head>
     <body>
         <%-include('sidebar')%>
@@ -18,7 +19,7 @@
                     <div id="write-box">
                         <input type="text" id="write-title" name="title" placeholder="제목" required minlength="2" maxlength="50">
                         <hr>
-                        <textarea id="write-content" name="content" placeholder="내용" required minlength="10" maxlength="60000"></textarea>
+                        <textarea id="summernote" name="content"></textarea>
                     </div>
                     <div id="write-bar">
                         <% if (user==false) { %>
@@ -39,7 +40,9 @@
         </div>
     </body>
     <script src="/jq/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="javascripts/effect.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
     <script src="javascripts/functions.js"></script>
 </html>

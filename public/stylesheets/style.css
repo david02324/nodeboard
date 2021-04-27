@@ -142,18 +142,13 @@ hr{
   border: solid 1px gray;
   display: flex;
   flex-direction: column;
+  text-align: left;
 }
 #write-title{
   font-size: 35px;
   width: 898px;
   border:none;
   padding-left: 20px;
-}
-#write-content{
-  flex: 1;
-  resize: none;
-  border: none;
-  padding: 20px;
 }
 #write-bar{
   margin-top:1px;
