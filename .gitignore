@@ -2,3 +2,4 @@ node_modules
 db-connect.js
 crypto.js
 googleCred.json
+imgbbAPIKEY.json

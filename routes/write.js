@@ -2,6 +2,10 @@ var express = require('express');
 var router = express.Router();
 var db = require('../db-query');
 var useCrypto = require('../crypto');
+var multipart = require('connect-multiparty');
+var multipartMiddleware = multipart();
+var fs = require('fs');
+var request = require('request');
 
 // 글 작성
 router.post('/',function(req,res,next){
@@ -47,6 +51,28 @@ router.post('/submit',function(req,res,next){
             });
         });
     }
+});
+
+router.post('/imageUpload',multipartMiddleware,function(req,res){
+    f = fs.readFileSync(req.files.file.path);
+    base64 = Buffer.from(f).toString('base64');
+    
+    var imgbbAPI = require('../imgbbAPIkey.json');
+    const options = {
+        uri:'https://api.imgbb.com/1/upload?expiration=600&key='+imgbbAPI.key, 
+        method: 'POST',
+        form: {
+          image:base64,
+        },
+        json: true
+    }
+    request.post(options, function(error,httpResponse,body){
+        if(error){
+            res.send({error: error});
+        } else{
+            res.send({url: body.data.display_url});
+        }
+    });
 });
 
 module.exports = router;
