@@ -5,6 +5,7 @@
         <link rel="stylesheet" href="/css/bootstrap.min.css">
         <link rel="stylesheet" href="/stylesheets/style.css">
         <link rel="stylesheet" href="/stylesheets/menu-button.css">
+        <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
     </head>
     <body>
         <%-include('sidebar')%>
@@ -20,7 +21,7 @@
                     <div id="write-box">
                         <input type="text" id="write-title" name="title" value="<%=title%>"required minlength="2" maxlength="50">
                         <hr>
-                        <textarea id="write-content" name="content" required minlength="10" maxlength="60000"><%=content%></textarea>
+                        <textarea id="summernote" name="content"><%-content%></textarea>
                     </div>
                     <div id="write-bar">
                         <input type="text" id="write-author" placeholder="<%=author%>" readonly>
@@ -35,7 +36,10 @@
         </div>
     </body>
     <script src="/jq/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="javascripts/effect.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
     <script src="javascripts/functions.js"></script>
+    <script src="javascripts/editor.js"></script>
 </html>
