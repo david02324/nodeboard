@@ -15,11 +15,11 @@ passport.deserializeUser(function(obj, done) {
 });
 
 // 구글 로그인 API 정보 등록
-var goolgeCred = require('../googleCred.json');
+var secret = require('../secret.json');
     passport.use(new GoogleStrategy({
-        clientID: goolgeCred.web.client_id,
-        clientSecret: goolgeCred.web.client_secret,
-        callbackURL: goolgeCred.web.redirect_uris[0]
+        clientID: secret.googleCred.web.client_id,
+        clientSecret: secret.googleCred.web.client_secret,
+        callbackURL: secret.googleCred.web.redirect_uris[0]
     },
     function(accessToken, refreshToken, profile, done) {
         process.nextTick(function(){

@@ -56,11 +56,14 @@ router.post('/submit',function(req,res,next){
 router.post('/imageUpload',multipartMiddleware,function(req,res){
     f = fs.readFileSync(req.files.file.path);
     base64 = Buffer.from(f).toString('base64');
-    
-    var imgbbAPI = require('../imgbbAPIkey.json');
+
+    var secret = require('../secret.json');
     const options = {
-        uri:'https://api.imgbb.com/1/upload?expiration=600&key='+imgbbAPI.key, 
+        uri:'https://api.imgur.com/3/image', 
         method: 'POST',
+        headers: {
+            Authorization: "Client-ID "+ secret.imgurAPI.clientID
+        },
         form: {
           image:base64,
         },
@@ -70,7 +73,7 @@ router.post('/imageUpload',multipartMiddleware,function(req,res){
         if(error){
             res.send({error: error});
         } else{
-            res.send({url: body.data.display_url});
+            res.send({url: body.data.link});
         }
     });
 });
