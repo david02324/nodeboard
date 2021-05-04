@@ -2,3 +2,4 @@ node_modules
 db-connect.js
 crypto.js
 secret.json
+config/config.json
