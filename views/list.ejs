@@ -10,29 +10,29 @@
         <%-include('sidebar')%>
         <%-include('navi-bar')%>
         <div id="content">
-            <% if(values.isSearch) { %>
+            <% if(isSearch) { %>
                 <div id="board-title-search">
-                    <% if (values.type == 'all') { %>
-                        모든 게시판에서 '<%=values.keyword%>' 검색 결과
+                    <% if (type == 'all') { %>
+                        모든 게시판에서 '<%=keyword%>' 검색 결과
                     <% } else { %> 
-                        <%=values.type%>에서 '<%=values.keyword%>' 검색 결과
+                        <%=type%>에서 '<%=keyword%>' 검색 결과
                     <% } %>
                 </div>
             <% } else { %>
                 <div id="board-title">
-                    <% if (values.type=='all') { %>
+                    <% if (type=='all') { %>
                         전체글 보기
                     <% } else { %>
-                        <%=values.type%>
+                        <%=type%>
                     <% } %>
                 </div>
             <% } %>
             <div id="wrap-upper">
-                <% if(values.isSearch === false) { %>
+                <% if(isSearch === false) { %>
                     <button type="button" class="btn btn-secondary" id="post-button" onclick="writePost()">글쓰기</button>
                 <% } %>
                 <form action="/search" accept-charset="utf-8" method="get">
-                    <input type="hidden" name="type" value="<%=values.type%>">
+                    <input type="hidden" name="type" value="<%=type%>">
                     <button type="submit" class="btn btn-primary" id="search-button">검색</button>
                     <input type="text" id="search-keyword" name="keyword" required minlength="2" maxlength="10">
                     <select class="form-control" id="search-mode" name="mode">
@@ -69,15 +69,15 @@
                         </table>
                         <div id="pages">
                             <hr>
-                            <% if(values.page>1) { %>
-                                <a class="btn btn-default" role="button" onclick="movePage('<%=Number(values.page)-1%>',<%=values.isSearch%>,'<%=values.type%>','<%=values.mode%>','<%=values.keyword%>',<%=maxPage%>)">이전</a>
+                            <% if(page>1) { %>
+                                <a class="btn btn-default" role="button" onclick="movePage('<%=Number(page)-1%>',<%=isSearch%>,'<%=type%>','<%=mode%>','<%=keyword%>',<%=maxPage%>)">이전</a>
                             <% } %>
-                            <%=values.page%> of <%=maxPage%>
-                            <% if(values.page < maxPage) { %>
-                                <a class="btn btn-default" role="button" onclick="movePage('<%=Number(values.page)+1%>',<%=values.isSearch%>,'<%=values.type%>','<%=values.mode%>','<%=values.keyword%>',<%=maxPage%>)">다음</a>
+                            <%=page%> of <%=maxPage%>
+                            <% if(page < maxPage) { %>
+                                <a class="btn btn-default" role="button" onclick="movePage('<%=Number(page)+1%>',<%=isSearch%>,'<%=type%>','<%=mode%>','<%=keyword%>',<%=maxPage%>)">다음</a>
                             <% } %>
-                            <input type="text" placeholder="<%=values.page%>" id="target-page">
-                            <button class="btn btn-default" onclick="movePage($('#target-page').val(),<%=values.isSearch%>,'<%=values.type%>','<%=values.mode%>','<%=values.keyword%>',<%=maxPage%>)" role="button">이동</a>
+                            <input type="text" placeholder="<%=page%>" id="target-page">
+                            <button class="btn btn-default" onclick="movePage($('#target-page').val(),<%=isSearch%>,'<%=type%>','<%=mode%>','<%=keyword%>',<%=maxPage%>)" role="button">이동</a>
                         </div>
                     <% } else { %>
                         <div style="position: absolute; left: 25%; top: 45%; font-size: 40px;">검색 결과가 하나도 없습니다!</div>

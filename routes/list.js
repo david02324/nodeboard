@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var db = require('../db-query');
 var models = require('../models')
+const Sequelize = require('sequelize');
+const {Op} = Sequelize.Op;
 
 // 최상단 도메인으로 접속시 전체글보기로 redirect
 router.get('/', function(req, res, next) {
@@ -19,31 +21,94 @@ router.get('/list', function(req,res,next){
     page = 1;
   if (type===undefined)
     type = 'all';
-  
-  var values = {};
-  values.page = page;
-  values.type = type;
-  values.isSearch = false;
 
-  getMaxPage().then(console.log);
 
-  // // 리스트 가져오기
-  // db.getList(20,type,page,(response,maxPage)=>{
-  //   // 우측 바(공지사항, 인기글) 가져오기
-  //   db.innerRight((bestPosts,announcements)=>{
-  //     // 정상적으로 로드되었다면
-  //     if (bestPosts && announcements){
-  //       data = {postData : response,values : values,maxPage : maxPage,bestPosts: bestPosts, announcements: announcements};
-  //       // 로그인 상태라면 data.user에 로그인 정보 담아서 전송
-  //       if (req.session.passport && req.session.passport.user)
-  //         data.user = req.session.passport.user;
-  //       else
-  //         data.user = false;
-        
-  //       res.render('list',data);
-  //     }
-  //     });
-  // });
+  Promise.all([
+    models.POST.count(),
+    getList(type,page),
+    getBestPosts(),
+    getAnnouncements(),
+    getBestPosts()
+  ]).then((values)=>{
+    data = {};
+    data.isLogined = false;
+    data.isSearch = false;
+    data.maxPage = Math.ceil(values[0] / 20);
+    data.page = page;
+    data.type = type;
+    data.mode = null;
+    data.keyword = '';
+
+    data.postData = [];
+    for (let post of values[1]){
+      data.postData.push(post.dataValues);
+    }
+
+    data.announcements = [];
+    for (let announcement of values[2]){
+      data.announcements.push(announcement.dataValues);
+    }
+    
+    data.bestPosts = [];
+    for (let bestPost of values[3]){
+      data.bestPosts.push(bestPost.dataValues);
+    }
+    
+    if (req.session.passport && req.session.passport.user){
+      data.user = req.session.passport.user;
+    }
+    else {
+      data.user = false; 
+    }
+
+    res.render('list',data);
+  }).catch(function(err) {
+    console.log(err);
+    res.render('error',{code:-1000});
+  });
 });
+
+// 글 가져오기
+async function getList(type,page){
+  if (type==='all'){
+    return models.POST.findAll({
+      attributes:['ID','AUTHOR','isLogined','TITLE','VIEWS','THUMBUP'],
+      order:[['ID','DESC']],
+      limit: 20,
+      offset: (page-1)*20
+    });
+  } else {
+    return models.POST.findAll({
+      attributes:['ID','AUTHOR','isLogined','TITLE','VIEWS','THUMBUP'],
+      where:{
+        type: type
+      },
+      order:[['ID','DESC']],
+      limit: 20,
+      offset: (page-1)*20
+    });
+  }
+}
+
+// 추천글 가져오기
+async function getBestPosts(){
+  return models.POST.findAll({
+    attributes:['ID','TITLE'],
+    order:[['THUMBUP','DESC']],
+    limit: 3
+  });
+}
+
+// 공지사항 가져오기
+async function getAnnouncements(){
+  return models.POST.findAll({
+    attributes:['ID','TITLE'],
+    where:{
+      type: '공지사항'
+    },
+    order:[['ID','DESC']],
+    limit: 3
+  });
+}
 
 module.exports = router;
