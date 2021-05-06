@@ -1,9 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var db = require('../db-query');
 var models = require('../models')
 const Sequelize = require('sequelize');
-const {Op} = Sequelize.Op;
 
 // 최상단 도메인으로 접속시 전체글보기로 redirect
 router.get('/', function(req, res, next) {
@@ -24,34 +22,32 @@ router.get('/list', function(req,res,next){
 
 
   Promise.all([
-    models.POST.count(),
-    getList(type,page),
-    getBestPosts(),
     getAnnouncements(),
-    getBestPosts()
+    getBestPosts(),
+    models.POST.count(),
+    getList(type,page)
   ]).then((values)=>{
     data = {};
-    data.isLogined = false;
     data.isSearch = false;
-    data.maxPage = Math.ceil(values[0] / 20);
+    data.maxPage = Math.ceil(values[2] / 20);
     data.page = page;
     data.type = type;
     data.mode = null;
     data.keyword = '';
 
-    data.postData = [];
-    for (let post of values[1]){
-      data.postData.push(post.dataValues);
-    }
-
     data.announcements = [];
-    for (let announcement of values[2]){
+    for (let announcement of values[0]){
       data.announcements.push(announcement.dataValues);
     }
-    
+
     data.bestPosts = [];
-    for (let bestPost of values[3]){
+    for (let bestPost of values[1]){
       data.bestPosts.push(bestPost.dataValues);
+    }
+
+    data.postData = [];
+    for (let post of values[3]){
+      data.postData.push(post.dataValues);
     }
     
     if (req.session.passport && req.session.passport.user){
