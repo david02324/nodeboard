@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var models = require('../models')
-const Sequelize = require('sequelize');
+var models = require('../models');
 
 // 최상단 도메인으로 접속시 전체글보기로 redirect
 router.get('/', function(req, res, next) {

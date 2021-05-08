@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
-var db = require('../db-query');
 var useCrypto = require('../crypto');
 var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
 var fs = require('fs');
 var request = require('request');
+var models = require('../models');
 
 // 글 작성
 router.post('/',function(req,res,next){
@@ -25,29 +25,40 @@ router.post('/submit',function(req,res,next){
     if (req.session.passport && req.session.passport.user){
         // 유저의 id를 암호화해서 전송
         useCrypto(req.session.passport.user.id, (cPassword)=>{
-            req.body.password = cPassword;
-            req.body.isLogined = 1;
-            req.body.author = req.session.passport.user.nickname;
+            data = {
+                TITLE : req.body.title,
+                TYPE : req.body.type,
+                CONTENT : req.body.content,
+                PASSWORD : cPassword,
+                isLogined : 1,
+                AUTHOR : req.session.passport.user.nickname
+            };
             // DB반영
-            db.writePost(req.body,(response)=>{
-                if(response)
-                    res.redirect('/list?type='+req.body.type);
-                else
-                    res.render('error',{code: -110});
+            models.POST.create(data).then(()=>{
+                res.redirect('/list?type='+req.body.type);
+            }).catch((err)=>{
+                console.log(err);
+                res.render('error',{code: -3000});
             });
         });
     // 비로그인 유저
     } else{
         // 비밀번호 암호화
         useCrypto(req.body.password, (cPassword) =>{
-            req.body.password = cPassword;
-            req.body.isLogined = 0;
+            data = {
+                TITLE : req.body.title,
+                TYPE : req.body.type,
+                CONTENT : req.body.content,
+                PASSWORD : cPassword,
+                isLogined : 0,
+                AUTHOR : req.body.author
+            };
             // DB반영
-            db.writePost(req.body,(response)=>{
-                if(response)
-                    res.redirect('/list?type='+req.body.type);
-                else
-                    res.render('error',{code: -111});
+            models.POST.create(data).then(()=>{
+                res.redirect('/list?type='+req.body.type);
+            }).catch((err)=>{
+                console.log(err);
+                res.render('error',{code: -3100});
             });
         });
     }

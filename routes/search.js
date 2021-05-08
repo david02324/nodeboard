@@ -51,7 +51,7 @@ router.get('/',function(req,res,next){
         res.render('list',data);
     }).catch(function(err) {
         console.log(err);
-        res.render('error',{code:-1000});
+        res.render('error',{code:-2000});
     });
 });
 
@@ -76,75 +76,35 @@ async function getAnnouncements(){
     });
 }
 
+const modeToColumn = {
+    제목: 'title',
+    작성자: 'author',
+    내용: 'content'
+};
+
 // 검색
 async function searchPost(type,mode,keyword,page){
     if (type == 'all'){
-        if (mode == '제목'){
-            return models.POST.findAndCountAll({
-                attributes:['ID','AUTHOR','isLogined','TITLE','VIEWS','THUMBUP'],
-                where:{
-                    TITLE: {[Op.like]:'%'+keyword+'%'}
-                },
-                order:[['ID','DESC']],
-                limit: 20,
-                offset: (page-1)*20
-            });
-        } else if (mode == '작성자'){
-            return models.POST.findAndCountAll({
-                attributes:['ID','AUTHOR','isLogined','TITLE','VIEWS','THUMBUP'],
-                where:{
-                    AUTHOR: {[Op.like]:'%'+keyword+'%'}
-                },
-                order:[['ID','DESC']],
-                limit: 20,
-                offset: (page-1)*20
-            });
-        } else if (mode == '내용'){
-            return models.POST.findAndCountAll({
-                attributes:['ID','AUTHOR','isLogined','TITLE','VIEWS','THUMBUP'],
-                where:{
-                    CONTENT: {[Op.like]:'%'+keyword+'%'}
-                },
-                order:[['ID','DESC']],
-                limit: 20,
-                offset: (page-1)*20
-            });
-        }
+        return models.POST.findAndCountAll({
+            attributes:['ID','AUTHOR','isLogined','TITLE','VIEWS','THUMBUP'],
+            where:{
+                [modeToColumn[mode]]:{[Op.like]:'%'+keyword+'%'}
+            },
+            order:[['ID','DESC']],
+            limit: 20,
+            offset: (page-1)*20
+        });
     } else{
-        if (mode == '제목'){
-            return models.POST.findAndCountAll({
-                attributes:['ID','AUTHOR','isLogined','TITLE','VIEWS','THUMBUP'],
-                where:{
-                    TITLE: {[Op.like]:'%'+keyword+'%'},
-                    type: type
-                },
-                order:[['ID','DESC']],
-                limit: 20,
-                offset: (page-1)*20
-            });
-        } else if (mode == '작성자'){
-            return models.POST.findAndCountAll({
-                attributes:['ID','AUTHOR','isLogined','TITLE','VIEWS','THUMBUP'],
-                where:{
-                    AUTHOR: {[Op.like]:'%'+keyword+'%'},
-                    type: type
-                },
-                order:[['ID','DESC']],
-                limit: 20,
-                offset: (page-1)*20
-            });
-        } else if (mode == '내용'){
-            return models.POST.findAndCountAll({
-                attributes:['ID','AUTHOR','isLogined','TITLE','VIEWS','THUMBUP'],
-                where:{
-                    CONTENT: {[Op.like]:'%'+keyword+'%'},
-                    type: type
-                },
-                order:[['ID','DESC']],
-                limit: 20,
-                offset: (page-1)*20
-            });
-        }
+        return models.POST.findAndCountAll({
+            attributes:['ID','AUTHOR','isLogined','TITLE','VIEWS','THUMBUP'],
+            where:{
+                [modeToColumn[mode]]: {[Op.like]:'%'+keyword+'%'},
+                type: type
+            },
+            order:[['ID','DESC']],
+            limit: 20,
+            offset: (page-1)*20
+        });
     }
 }
 

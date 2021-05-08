@@ -414,10 +414,10 @@ function register(){
         },
         success: function(result){
             result = result.result;
-            if(result == -1){
+            if(result == 1){
                 alert('완료되었습니다! 다시 로그인해주세요.');
                 location.href='/login/logout';
-            } else if (result == 1){
+            } else if (result == -1){
                 alert('이미 존재하는 닉네임입니다.');
                 $('#nickname').val('');
             } else if (result == 0){
