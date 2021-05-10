@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title><%= id %> 조회</title>
+        <title><%= ID %> 조회</title>
         <link rel="stylesheet" href="/css/bootstrap.min.css">
         <link rel="stylesheet" href="/stylesheets/style.css">
         <link rel="stylesheet" href="/stylesheets/menu-button.css">
@@ -14,26 +14,26 @@
                 <div id="view-left">
                     <div id="view-post">
                         <div id="post-head">
-                            <div id="post-title"><%=title%></div>
+                            <div id="post-title"><%=TITLE%></div>
                             <hr>
                             <div id="post-authorandtype">
                             <% if (isLogined == 1) { %>
-                                <strong><%=author%></strong>
+                                <strong><%=AUTHOR%></strong>
                             <% } else { %>
-                                <%=author%> (비로그인)    
+                                <%=AUTHOR%> (비로그인)    
                             <% } %>
-                                / <a href="/list?type=<%=type%>"><%=type%></a></div>
-                            <div id="post-views">조회수 <%=views%></div>
+                                / <a href="/list?type=<%=TYPE%>"><%=TYPE%></a></div>
+                            <div id="post-views">조회수 <%=VIEWS%></div>
                             <div style="clear:both"></div>
                             <hr>
                         </div>
                         <div id="post-body">
-                            <%-content%>
+                            <%-CONTENT%>
                         </div>
                         <hr>
                         <div id="post-thumbuparea">
-                            <span id="thumbup-count"><%=thumbup%></span><br>
-                            <a onclick="thumbup(<%=id%>)" onmouseover="this.style.cursor='pointer'"><img src="/images/thumbup.svg" alt="추천하기"></a>
+                            <span id="thumbup-count"><%=THUMBUP%></span><br>
+                            <a onclick="thumbup(<%=ID%>)" onmouseover="this.style.cursor='pointer'"><img src="/images/thumbup.svg" alt="추천하기"></a>
                         </div>
                         <% if(isLogined==0) { %>
                             <hr>
@@ -41,28 +41,28 @@
                                 <button type="button" class="btn btn-danger" id="delete-btn" name="delete" onclick="
                                 javascript:
                                     if(confirm('정말로 삭제하시겠습니까?')){
-                                        removePost(<%=id%>);
+                                        removePost(<%=ID%>);
                                     }
                                 ">삭제</button>
-                                <button type="button" class="btn btn-primary" id="modify-btn" name="modify" onclick="updatePost(<%=id%>)">수정</button>
+                                <button type="button" class="btn btn-primary" id="modify-btn" name="modify" onclick="updatePost(<%=ID%>)">수정</button>
                                 <input type="password" id="delete-password" placeholder="비밀번호" required minlength="4" maxlength="20">
                             </div>
-                        <% } else if (user && user.nickname == author) { %>
+                        <% } else if (user && user.nickname == AUTHOR) { %>
                             <hr>
                             <div id="modify-or-update">
                                 <input type="hidden" id="user-id" value="<%=user.id%>">
                                 <button type="button" class="btn btn-danger" id="delete-btn" name="delete" onclick="
                                 javascript:
                                     if(confirm('정말로 삭제하시겠습니까?')){
-                                        removePost(<%=id%>);
+                                        removePost(<%=ID%>);
                                     }
                                 ">삭제</button>
-                                <button type="button" class="btn btn-primary" id="modify-btn" name="modify" onclick="updatePost(<%=id%>)">수정</button>
+                                <button type="button" class="btn btn-primary" id="modify-btn" name="modify" onclick="updatePost(<%=ID%>)">수정</button>
                             </div>
                         <% } %>
                     </div>
                     <div id="reply-upper">
-                        <a onclick="showReply(<%=id%>)" onmouseover="this.style.cursor='pointer'">댓글보기</a>
+                        <a onclick="showReply(<%=ID%>)" onmouseover="this.style.cursor='pointer'">댓글보기</a>
                     </div>
                     <div id="reply-area">
                     </div>

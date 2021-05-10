@@ -79,14 +79,14 @@ router.post('/submit', function(req,res,next){
     });
 });
 
+// 인증글 여부 확인
 async function checkIsLogined(id){
-    const data = await models.POST.findOne({
-        attributes:['isLogined'],
-        where:{
-            ID:id
-        }
+    const check = await models.POST.findOne({
+        attributes: ['isLogined'],
+        where: {ID: id}
     });
-    return data.dataValues.isLogined;
+
+    return check.dataValues.isLogined;
 }
 
 async function checkPassword(id,password){

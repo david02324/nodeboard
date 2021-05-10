@@ -1,85 +1,80 @@
 var express = require('express');
+const useCrypto = require('../crypto');
 var router = express.Router();
 var db = require('../db-query');
+const { Sequelize } = require('../models');
+var models = require('../models')
 
 // 글 조회
 router.get('/', function(req, res, next) {
-    // 글 id 저장
-    let {id} = req.query;
+    const {id} = req.query;
 
-    db.viewPost(id,(response)=>{
-        if (response){
-            // 공지사항, 추천글 불러오기
-            db.innerRight((bestPosts,announcements)=>{
-                if (bestPosts && announcements){
-                    // 글 정보 객체에 저장
-                    data = {id: id,
-                        title: response.TITLE,
-                        author: response.AUTHOR,
-                        type: response.TYPE,
-                        content: response.CONTENT,
-                        views: response.VIEWS,
-                        isLogined: response.isLogined,
-                        thumbup: response.THUMBUP,
-                        bestPosts: bestPosts,
-                        announcements: announcements};
-                    
-                    // 로그인 여부 확인
-                    if (req.session.passport && req.session.passport.user)
-                        data.user = req.session.passport.user;
-                    else
-                        data.user = false;
-                    
-                    res.render('view', data);
-                } else{
-                    res.render('error',{code: -108});
-                }
-            });
-        } else{
-            res.render('error',{code: -109});
+    Promise.all([
+        getAnnouncements(),
+        getBestPosts(),
+        viewPost(id)
+    ]).then((values)=>{
+        data = values[2].dataValues;
+
+        data.announcements = [];
+        for (let announcement of values[0]){
+          data.announcements.push(announcement.dataValues);
         }
+        
+        data.bestPosts = [];
+        for (let bestPost of values[1]){
+          data.bestPosts.push(bestPost.dataValues);
+        }
+
+        if (req.session.passport && req.session.passport.user){
+            data.user = req.session.passport.user;
+        } else{
+            data.user = false;
+        }
+
+        res.render('view',data);
+    }).catch((err)=>{
+        console.log(err);
+        res.render('error',{code:-6000});
     });
 });
 
 // 글 삭제
 router.post('/delete',function(req,res,next){
-    db.checkIsLogined(req.body.id,(result)=>{
-        if (result == 1){
-            if (req.session.passport && req.session.passport.user){ // 로그인 유저가 쓴 글 삭제
-                db.checkPassword(req.body.id,req.session.passport.user.id,(result)=>{
-                    if (result){
-                        db.deletePost(req.body.id, (response)=>{
-                            if (response){
-                                res.send({code: 1});
-                            } else{
-                                res.send({code: -3});
-                            }
-                        });
-                    } else{
-                        res.send({code: -2000});
-                    }
-                });
-            }
-        } else if (result == 0){ // 비로그인 유저가 쓴 글 삭제
-            // 패스워드 확인
-            db.checkPassword(req.body.id,req.body.plainPassword,(result)=>{
-                if (result){
-                    db.deletePost(req.body.id, (response)=>{
-                        if (response){
-                            res.send({code: 1});
-                        } else{
-                            res.send({code: -4});
+    checkIsLogined(req.body.id).then((values)=>{
+        if (values[0] == 1){
+            if (req.session.passport && req.session.passport.user){
+                useCrypto(req.session.passport.user.id,(cPassword)=>{
+                    checkPassword(req.body.id, cPassword).then((passwordChecked)=>{
+                        if (passwordChecked){
+                            deletePost(req.body.id).then((result)=>{
+                                res.send({code: result});
+                            });
+                        } else {
+                            res.send({code: -7000});
                         }
                     });
-                } else{
-                    res.send({code: -1000});
-                }
-            });
+                });
+            } else{
+                res.send({code : -7100});
+            }
         } else {
-            res.send({code: result});
+            useCrypto(req.body.plainPassword,(cPassword)=>{
+                checkPassword(req.body.id, cPassword).then((passwordChecked)=>{
+                    if (passwordChecked){
+                        deletePost(req.body.id).then((result)=>{
+                            res.send({code: result});
+                        });
+                    } else {
+                        res.send({code: -7200});
+                    }
+                });
+            });
         }
-    });
-
+    }).catch((err)=>{
+        console.log(err);
+        res.render('error',{code: -7300});
+    })
 });
 
 // 글 추천
@@ -149,4 +144,76 @@ router.post('/loginCheck',function(req,res,next){
     }
 });
 
+// 글 조회
+async function viewPost(id){
+    // 조회수 증가
+    await models.POST.update({
+        VIEWS: Sequelize.literal('VIEWS + 1')},{
+        where: { ID: id}
+    });
+
+    // 데이터 가져오기
+    return models.POST.findOne({
+        attributes: {exclude: ['PASSWORD']},
+        where: { ID: id}
+    });
+}
+
+// 인증글 여부 확인
+async function checkIsLogined(id){
+    const check = await models.POST.findOne({
+        attributes: ['isLogined'],
+        where: {ID: id}
+    });
+
+    return check.dataValues.isLogined;
+}
+
+// 비밀번호 확인
+async function checkPassword(id,password){
+    const data = await models.POST.findOne({
+        attributes:['PASSWORD'],
+        where:{
+            ID:id
+        }
+    });
+
+    return data.dataValues.PASSWORD == password;
+}
+
+// 글 삭제
+async function deletePost(id){
+    // 댓글 삭제
+    await models.REPLY.destroy({
+        where: { POST_ID: id}
+    });
+
+
+    // 글 삭제
+    return await models.POST.destroy({
+        where: { ID: id}
+    });
+}
+
+
+// 추천글 가져오기
+async function getBestPosts(){
+    return models.POST.findAll({
+        attributes:['ID','TITLE'],
+        order:[['THUMBUP','DESC']],
+        limit: 3
+    });
+}
+  
+// 공지사항 가져오기
+async function getAnnouncements(){
+    return models.POST.findAll({
+        attributes:['ID','TITLE'],
+        where:{
+        type: '공지사항'
+        },
+        order:[['ID','DESC']],
+        limit: 3
+    });
+}
 module.exports = router;

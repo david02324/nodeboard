@@ -38,8 +38,10 @@ function removePost(id){
                 alert('삭제가 완료되었습니다.');
                 location.href="/list";
             } else{
-                if (result.code == -1000)
+                if (result.code == -7200)
                     alert('비밀번호가 일치하지 않습니다.');
+                else if (result.code == 0)
+                    alert('존재하지 않는 글입니다.');
                 else
                     alert('에러가 발생했습니다. ERRORCODE : '+result.code);
             }
