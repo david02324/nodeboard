@@ -116,7 +116,7 @@ function thumbup(id){
             if (result.result)
                 $('#thumbup-count').text(result.count);
             else
-                alert('에러가 발생했습니다. ERRORCODE : '+result.count);
+                alert('에러가 발생했습니다. ERRORCODE : '+result.code);
         }
     })
 };
@@ -143,13 +143,18 @@ function refreshReply(postId){
                     <div class="${reply.ID}">
                     <div id="reply">
                     <div id="reply-bar">
-                    ${reply.AUTHOR}`
+                    `
                     // 비로그인 사용자의 댓글일 경우
                     if (reply.isLogined == 0){
-                        body += `<a onclick="deleteReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>`
+                        body += `${reply.AUTHOR} (비로그인)
+                        <a onclick="deleteReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>`
                     // 로그인 사용자의 댓글일 경우
-                    } else if (nickname == reply.AUTHOR) {
-                        body += `<a onclick="deleteMyReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>`
+                    } else {
+                        body += `<strong>${reply.AUTHOR}</strong>`
+                        // 자신의 댓글일 경우
+                        if (nickname == reply.AUTHOR) {
+                            body += `<a onclick="deleteMyReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>`
+                        }
                     }
                     body += `
                     <a onclick="writeChildReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">[답글]</a>
@@ -167,11 +172,15 @@ function refreshReply(postId){
                     var body = `
                     <div id="reply">
                     <div id="reply-bar">
-                    ${reply.AUTHOR}`
+                    `
                     if (reply.isLogined == 0){
-                        body += `<a onclick="deleteReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>`
-                    } else if (nickname == reply.AUTHOR){
-                        body += `<a onclick="deleteMyReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>`
+                        body += `${reply.AUTHOR} (비로그인)
+                        <a onclick="deleteReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>`
+                    } else {
+                        body += `<strong>${reply.AUTHOR}</strong>`
+                        if (nickname == reply.AUTHOR){
+                            body += `<a onclick="deleteMyReply(${reply.ID},${reply.POST_ID})" onmouseover="this.style.cursor='pointer'">X</a>`
+                        }
                     }
                     body += `
                     </div>
@@ -258,14 +267,11 @@ function deleteReply(id,postId){
             isLogined: 0
         },
         success: function(result){
-            if (result.code == -1){
+            if (result.code == 1){
                 // 댓글 삭제에 성공했다면 댓글 새로고침
                 refreshReply(postId);
             } else{
-                if (result.code == 0)
-                    alert('비밀번호가 일치하지 않습니다.');
-                else
-                    alert('에러가 발생했습니다. ERRORCODE : '+result.code);
+                alert('비밀번호가 일치하지 않거나 없는 댓글입니다.');
             }
         }
     });
@@ -283,14 +289,11 @@ function deleteMyReply(id,postId){
                 isLogined: 1
             },
             success: function(result){
-                // 댓글 삭제에 성공했다면 댓글 새로고침
-                if (result.code == -1){
+                if (result.code == 1){
+                    // 댓글 삭제에 성공했다면 댓글 새로고침
                     refreshReply(postId);
                 } else{
-                    if (result.code == 0)
-                        alert('비밀번호가 일치하지 않습니다.');
-                    else
-                        alert('에러가 발생했습니다. ERRORCODE : '+result.code);
+                    alert('비밀번호가 일치하지 않거나 없는 댓글입니다.');
                 }
             }
         });
@@ -327,10 +330,6 @@ function writeReply(postId,rootReplyId,isLogined){
         return;
     }
 
-    // // 로그인 유저라면 패스워드 일단 공백으로 설정
-    // if (isLogined == 1){
-    //     password = '';
-    // }
     var data = {writer,password,rootReplyId,isLogined,content,postId};
     
     $.ajax({
@@ -339,7 +338,7 @@ function writeReply(postId,rootReplyId,isLogined){
         type: 'POST',
         data: data,
         success: function(result){
-            if (result.code == -1){
+            if (result.code == 1){
                 // 댓글 작성 성공시 댓글 새로고침
                 refreshReply(postId);
             } else{
